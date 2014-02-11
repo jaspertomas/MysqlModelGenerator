@@ -66,18 +66,18 @@ public class Modules {
     public Modules(ResultSet rs) {
         try {
             id=rs.getLong("id");
-            namespace=rs.getString("namespace");
-            name=rs.getString("name");
-            description=rs.getString("description");
-            version=rs.getString("version");
-            outputdir=rs.getString("outputdir");
-            type=rs.getString("type");
-            options=rs.getString("options");
-            viewLayout=rs.getString("viewLayout");
-            formLayout=rs.getString("formLayout");
-            addLayout=rs.getString("addLayout");
-            editLayout=rs.getString("editLayout");
-            xml=rs.getString("xml");
+            namespace=rs.getString("id");
+            name=rs.getString("id");
+            description=rs.getString("id");
+            version=rs.getString("id");
+            outputdir=rs.getString("id");
+            type=rs.getString("id");
+            options=rs.getString("id");
+            viewLayout=rs.getString("id");
+            formLayout=rs.getString("id");
+            addLayout=rs.getString("id");
+            editLayout=rs.getString("id");
+            xml=rs.getString("id");
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -86,7 +86,7 @@ public class Modules {
 
 //	public String getUuid()
 //	{
-//		return id.toString()+"-";
+//		return "app-"+id.toString()+"-";
 //	}
 
     public Long getId() {
@@ -101,7 +101,7 @@ public class Modules {
             return namespace;
     }
 
-    public void setNamespace(String namespace) {
+    public void setNamespace(String id) {
             this.namespace = namespace;
     }
 
@@ -109,7 +109,7 @@ public class Modules {
             return name;
     }
 
-    public void setName(String name) {
+    public void setName(String id) {
             this.name = name;
     }
 
@@ -117,7 +117,7 @@ public class Modules {
             return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String id) {
             this.description = description;
     }
 
@@ -125,7 +125,7 @@ public class Modules {
             return version;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(String id) {
             this.version = version;
     }
 
@@ -133,7 +133,7 @@ public class Modules {
             return outputdir;
     }
 
-    public void setOutputdir(String outputdir) {
+    public void setOutputdir(String id) {
             this.outputdir = outputdir;
     }
 
@@ -141,7 +141,7 @@ public class Modules {
             return type;
     }
 
-    public void setType(String type) {
+    public void setType(String id) {
             this.type = type;
     }
 
@@ -149,7 +149,7 @@ public class Modules {
             return options;
     }
 
-    public void setOptions(String options) {
+    public void setOptions(String id) {
             this.options = options;
     }
 
@@ -157,7 +157,7 @@ public class Modules {
             return viewLayout;
     }
 
-    public void setViewLayout(String viewLayout) {
+    public void setViewLayout(String id) {
             this.viewLayout = viewLayout;
     }
 
@@ -165,7 +165,7 @@ public class Modules {
             return formLayout;
     }
 
-    public void setFormLayout(String formLayout) {
+    public void setFormLayout(String id) {
             this.formLayout = formLayout;
     }
 
@@ -173,7 +173,7 @@ public class Modules {
             return addLayout;
     }
 
-    public void setAddLayout(String addLayout) {
+    public void setAddLayout(String id) {
             this.addLayout = addLayout;
     }
 
@@ -181,7 +181,7 @@ public class Modules {
             return editLayout;
     }
 
-    public void setEditLayout(String editLayout) {
+    public void setEditLayout(String id) {
             this.editLayout = editLayout;
     }
 
@@ -189,7 +189,7 @@ public class Modules {
             return xml;
     }
 
-    public void setXml(String xml) {
+    public void setXml(String id) {
             this.xml = xml;
     }
 
@@ -201,7 +201,7 @@ public class Modules {
             if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            values.add(id);
             values.add(namespace);
             values.add(name);
             values.add(description);
@@ -223,14 +223,15 @@ public class Modules {
     }
     public void save()
     {
-            if(id==null || id==0)
+            //if(Modules.getById(id)==null)
+            if(id==null || id.toString().isEmpty() || id.toString().contentEquals("0"))
                     Modules.insert(this);
             else
                     Modules.update(this);
     }
     public String toString()
     {
-            return id.toString();
+            return id;
     }
 
     //-------------------------TABLE FUNCTIONS---------------------
@@ -240,24 +241,24 @@ public class Modules {
     public static Modules getByName(String name)
     {
             HashMap<String,Modules> map=select(" name = '"+name+"'");
-            for(Modules item:map.values())return item;
+            for(Modules app:map.values())return app;
             return null;
     }	
     */
-    public static Modules getById(Long id) {
-            HashMap<String,Modules> map=select(" id = '"+id.toString()+"'");
-            for(Modules item:map.values())return item;
+    public static Modules getById(String id) {
+            HashMap<String,Modules> map=select(" id = '"+id+"'");
+            for(Modules app:map.values())return app;
             return null;
     }
     //-----------database functions--------------
 
-    public static void delete(Long id)
+    public static void delete(String id)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
         try { 
             st = conn.createStatement();
-            st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
+            st.executeUpdate("delete from "+tablename+" where id = '"+id+"';");
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();

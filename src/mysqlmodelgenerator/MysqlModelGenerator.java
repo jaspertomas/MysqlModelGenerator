@@ -60,9 +60,9 @@ public class MysqlModelGenerator {
     public static void createModelFile(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
     {
         //write file to current directory
-        File outputdir=new File("./output");
+        File outputdir=new File("./src/models");
         outputdir.mkdir();
-        FileWriter.write(outputdir.getPath()+"/"+table+".txt", createModelFileContents(table,fields,fieldtypes));
+        FileWriter.write(outputdir.getPath()+"/"+toCamelCase(table)+".java", createModelFileContents(table,fields,fieldtypes));
     }
     public static String createModelFileContents(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
     {
@@ -81,9 +81,14 @@ public class MysqlModelGenerator {
             fieldtypesstring+="\n            "+(i==0?"":",")+"\""+fieldtypes.get(i) +"\"";
         }
         
+        String idfield=fields.get(0);
+        String idfieldtype=fieldtypes.get(0);
+        String idfieldtypestringifier=stringifier(fieldtypes.get(0));
+        
         String gettersandsetters="";
-        String datatype;
+        String datatype="";
         String field="";
+        String fieldtype="";
         for(int i=0;i<fields.size();i++)
         {
             field=fields.get(i);
@@ -93,7 +98,7 @@ public class MysqlModelGenerator {
 +"\n            return "+field+";"
 +"\n    }"
 +"\n"
-+"\n    public void set"+toCamelCase(field)+"("+datatype+" id) {"
++"\n    public void set"+toCamelCase(field)+"("+datatype+" "+field+") {"
 +"\n            this."+field+" = "+field+";"
 +"\n    }"
 +"\n";
@@ -113,22 +118,24 @@ public class MysqlModelGenerator {
         {
             field=fields.get(i);
             constructorfields+=
-"\n            "+field+"=rs."+rsGetterFor(fieldtypes.get(i))+"(\"id\");";
+"\n            "+field+"=rs."+rsGetterFor(fieldtypes.get(i))+"(\""+field+"\");";
         }
-/*
-+"\n            id=rs.getString(\"id\");"
-+"\n            username = rs.getString(\"username\");"
-+"\n            password_hash = rs.getString(\"password_hash\");"
- 
- */        
  
         String implodevaluesstring="";
         for(int i=0;i<fields.size();i++)
         {
             field=fields.get(i);
+            fieldtype=fieldtypes.get(i);
             implodevaluesstring+=
-"\n            values.add("+field+");";
+"\n            values.add("+field+stringifier(fieldtype)+");";
         }
+        
+        String savestring="";
+        if(datatypeFor(idfieldtype).contentEquals("String"))
+            savestring="\n            if("+idfield+"==null || "+idfield+".isEmpty() )";
+        else
+            savestring="\n            if("+idfield+"==null || "+idfield+"==0)";
+        
         
         String output="package models;"
 +"\n"
@@ -170,7 +177,7 @@ public class MysqlModelGenerator {
 +"\n"
 +"\n//	public String getUuid()"
 +"\n//	{"
-+"\n//		return \"app-\"+id.toString()+\"-\";"
++"\n//		return id.toString()+\"-\";"
 +"\n//	}"
 +"\n"
 +gettersandsetters
@@ -179,7 +186,7 @@ public class MysqlModelGenerator {
 +"\n    public ArrayList<String> implodeFieldValuesHelper(boolean withId)"
 +"\n    {"
 +"\n            ArrayList<String> values=new ArrayList<String>(); "
-+"\n            if(withId)values.add(id.toString());"
++"\n            if(withId)values.add("+idfield +idfieldtypestringifier+");"
 +"\n"
 +"\n            //add values for each field here"
 +implodevaluesstring
@@ -192,15 +199,14 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n    public void save()"
 +"\n    {"
-+"\n            //if([tableCaps].getById(id)==null)"
-+"\n            if(id==null || id.toString().isEmpty() || id.toString().contentEquals(\"0\"))"
++savestring
 +"\n                    [tableCaps].insert(this);"
 +"\n            else"
 +"\n                    [tableCaps].update(this);"
 +"\n    }"
 +"\n    public String toString()"
 +"\n    {"
-+"\n            return "+fields.get(0)+";"
++"\n            return "+idfield+idfieldtypestringifier+";"
 +"\n    }"
 +"\n"
 +"\n    //-------------------------TABLE FUNCTIONS---------------------"
@@ -210,24 +216,24 @@ public class MysqlModelGenerator {
 +"\n    public static [tableCaps] getByName(String name)"
 +"\n    {"
 +"\n            HashMap<String,[tableCaps]> map=select(\" name = '\"+name+\"'\");"
-+"\n            for([tableCaps] app:map.values())return app;"
++"\n            for([tableCaps] item:map.values())return item;"
 +"\n            return null;"
 +"\n    }	"
 +"\n    */"
-+"\n    public static [tableCaps] getById(String id) {"
-+"\n            HashMap<String,[tableCaps]> map=select(\" id = '\"+id+\"'\");"
-+"\n            for([tableCaps] app:map.values())return app;"
++"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+datatypeFor(idfieldtype)+" "+idfield+") {"
++"\n            HashMap<String,[tableCaps]> map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
++"\n            for([tableCaps] item:map.values())return item;"
 +"\n            return null;"
 +"\n    }"
 +"\n    //-----------database functions--------------"
 +"\n"
-+"\n    public static void delete(String id)"
++"\n    public static void delete("+datatypeFor(idfieldtype)+" id)"
 +"\n    {"
 +"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();            "
 +"\n        Statement st = null;"
 +"\n        try { "
 +"\n            st = conn.createStatement();"
-+"\n            st.executeUpdate(\"delete from \"+tablename+\" where id = '\"+id+\"';\");"
++"\n            st.executeUpdate(\"delete from \"+tablename+\" where "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"';\");"
 +"\n        } catch (SQLException ex) {"
 +"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
@@ -235,7 +241,7 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n    public static void delete([tableCaps] item)"
 +"\n    {"
-+"\n        delete(item.getId());"
++"\n        delete(item.get"+toCamelCase(idfield)+"());"
 +"\n    }"
 +"\n    public static void insert([tableCaps] item)"
 +"\n    {"
@@ -394,8 +400,6 @@ public class MysqlModelGenerator {
             return "Float";
         else if(type.contentEquals("double"))
             return "Double";
-        else if(type.contentEquals("real"))
-            return "Real";
         else if(type.contentEquals("boolean"))
             return "Boolean";
         else 
@@ -485,27 +489,27 @@ public class MysqlModelGenerator {
     {
         type=type.replaceAll("[0-9]", "");
         if(type.contentEquals("int")||type.contentEquals("int()"))
-            return ".toString";
+            return ".toString()";
         else if(type.contains("varchar()"))
             return "";
         else if(type.contentEquals("text"))
             return "";
         else if(type.contentEquals("date"))
-            return ".toString";
+            return ".toString()";
         else if(type.contains("bigint"))
-            return ".toString";
+            return ".toString()";
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
-            return ".toString";
+            return ".toString()";
         else if(type.contentEquals("decimal"))
-            return ".toString";
+            return ".toString()";
         else if(type.contentEquals("float"))
-            return ".toString";
+            return ".toString()";
         else if(type.contentEquals("double"))
-            return ".toString";
+            return ".toString()";
         else if(type.contentEquals("real"))
-            return "getReal";
+            return "";
         else if(type.contentEquals("boolean"))
-            return ".toString";
+            return ".toString()";
         else 
             return "";  
     }    
