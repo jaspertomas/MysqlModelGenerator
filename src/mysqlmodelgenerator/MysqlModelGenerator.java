@@ -81,6 +81,16 @@ public class MysqlModelGenerator {
             fieldtypesstring+="\n            "+(i==0?"":",")+"\""+fieldtypes.get(i) +"\"";
         }
         
+        String gettersandsetters=
+"\n    public String getId() {"
++"\n            return id;"
++"\n    }"
++"\n"
++"\n    public void setId(String id) {"
++"\n            this.id = id;"
++"\n    }"
++"\n";
+                
         String output="package models;"
 +"\n"
 +"\nimport java.sql.Connection;"
@@ -120,34 +130,12 @@ public class MysqlModelGenerator {
 +"\n        }"
 +"\n    }"
 +"\n"
-+"\n    public String getId() {"
-+"\n            return id;"
-+"\n    }"
-+"\n"
-+"\n    public void setId(String id) {"
-+"\n            this.id = id;"
-+"\n    }"
-+"\n"
 +"\n//	public String getUuid()"
 +"\n//	{"
 +"\n//		return \"app-\"+id.toString()+\"-\";"
 +"\n//	}"
 +"\n"
-+"\n    public String getUsername() {"
-+"\n        return username;"
-+"\n    }"
-+"\n"
-+"\n    public void setUsername(String username) {"
-+"\n        this.username = username;"
-+"\n    }"
-+"\n"
-+"\n    public String getPassword_hash() {"
-+"\n        return password_hash;"
-+"\n    }"
-+"\n"
-+"\n    public void setPassword_hash(String password_hash) {"
-+"\n        this.password_hash = password_hash;"
-+"\n    }"
++gettersandsetters
 +"\n"
 +"\n    //database functions"
 +"\n    public ArrayList<String> implodeFieldValuesHelper(boolean withId)"
@@ -338,5 +326,83 @@ public class MysqlModelGenerator {
     public static String capitalize(String s)
     {
         return s.substring(0, 1).toUpperCase()+s.substring(1);
+    }
+    public static String datatypeFor(String type)
+    {
+        type=type.replaceAll("[0-9]", "");
+        if(type.contentEquals("int")||type.contentEquals("int()"))
+            return "Integer";
+        else if(type.contains("varchar()"))
+            return "String";
+        else if(type.contentEquals("text"))
+            return "String";
+        else if(type.contentEquals("date"))
+            return "Date";
+        else if(type.contains("bigint"))
+            return "Long";
+        else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
+            return "Integer";
+        else if(type.contentEquals("decimal"))
+            return "Decimal";
+        else if(type.contentEquals("float"))
+            return "Float";
+        else if(type.contentEquals("double"))
+            return "Double";
+        else if(type.contentEquals("real"))
+            return "Real";
+        else if(type.contentEquals("boolean"))
+            return "Boolean";
+/*
+<option value="INT" selected="selected">INT</option>
+<option value="VARCHAR">VARCHAR</option>
+<option value="TEXT">TEXT</option>
+<option value="DATE">DATE</option>
+<optgroup label="NUMERIC"><option value="TINYINT">TINYINT</option>
+<option value="SMALLINT">SMALLINT</option>
+<option value="MEDIUMINT">MEDIUMINT</option>
+<option value="INT" selected="selected">INT</option>
+<option value="BIGINT">BIGINT</option>
+<option value="-">-</option>
+<option value="DECIMAL">DECIMAL</option>
+<option value="FLOAT">FLOAT</option>
+<option value="DOUBLE">DOUBLE</option>
+<option value="REAL">REAL</option>
+<option value="-">-</option>
+<option value="BIT">BIT</option>
+<option value="BOOLEAN">BOOLEAN</option>
+<option value="SERIAL">SERIAL</option>
+</optgroup><optgroup label="DATE and TIME"><option value="DATE">DATE</option>
+<option value="DATETIME">DATETIME</option>
+<option value="TIMESTAMP">TIMESTAMP</option>
+<option value="TIME">TIME</option>
+<option value="YEAR">YEAR</option>
+</optgroup><optgroup label="STRING"><option value="CHAR">CHAR</option>
+<option value="VARCHAR">VARCHAR</option>
+<option value="-">-</option>
+<option value="TINYTEXT">TINYTEXT</option>
+<option value="TEXT">TEXT</option>
+<option value="MEDIUMTEXT">MEDIUMTEXT</option>
+<option value="LONGTEXT">LONGTEXT</option>
+<option value="-">-</option>
+<option value="BINARY">BINARY</option>
+<option value="VARBINARY">VARBINARY</option>
+<option value="-">-</option>
+<option value="TINYBLOB">TINYBLOB</option>
+<option value="MEDIUMBLOB">MEDIUMBLOB</option>
+<option value="BLOB">BLOB</option>
+<option value="LONGBLOB">LONGBLOB</option>
+<option value="-">-</option>
+<option value="ENUM">ENUM</option>
+<option value="SET">SET</option>
+</optgroup><optgroup label="SPATIAL"><option value="GEOMETRY">GEOMETRY</option>
+<option value="POINT">POINT</option>
+<option value="LINESTRING">LINESTRING</option>
+<option value="POLYGON">POLYGON</option>
+<option value="MULTIPOINT">MULTIPOINT</option>
+<option value="MULTILINESTRING">MULTILINESTRING</option>
+<option value="MULTIPOLYGON">MULTIPOLYGON</option>
+<option value="GEOMETRYCOLLECTION">GEOMETRYCOLLECTION</option>
+</optgroup>    
+ */        
     }
 }
