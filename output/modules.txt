@@ -12,7 +12,7 @@ import utils.MySqlDBHelper;
 
 public class Modules {
     //------------FIELDS-----------
-    public static final String tablename="[tablesmall]";
+    public static final String tablename="modules";
     //field names
     public static String[] fields={
             "id"
@@ -47,26 +47,41 @@ public class Modules {
             };
     //-----------------------
 
-    String username="",password_hash="",id="";
+    public Long id;
+    public String namespace;
+    public String name;
+    public String description;
+    public String version;
+    public String outputdir;
+    public String type;
+    public String options;
+    public String viewLayout;
+    public String formLayout;
+    public String addLayout;
+    public String editLayout;
+    public String xml;
+
     public Modules() {
     }
     public Modules(ResultSet rs) {
         try {
-            id=rs.getString("id");
-            username = rs.getString("username");
-            password_hash = rs.getString("password_hash");
+            id=rs.getLong("id");
+            namespace=rs.getString("id");
+            name=rs.getString("id");
+            description=rs.getString("id");
+            version=rs.getString("id");
+            outputdir=rs.getString("id");
+            type=rs.getString("id");
+            options=rs.getString("id");
+            viewLayout=rs.getString("id");
+            formLayout=rs.getString("id");
+            addLayout=rs.getString("id");
+            editLayout=rs.getString("id");
+            xml=rs.getString("id");
         } catch (SQLException ex) {
             Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
-    }
-
-    public String getId() {
-            return id;
-    }
-
-    public void setId(String id) {
-            this.id = id;
     }
 
 //	public String getUuid()
@@ -74,21 +89,110 @@ public class Modules {
 //		return "app-"+id.toString()+"-";
 //	}
 
-    public String getUsername() {
-        return username;
+    public Long getId() {
+            return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(Long id) {
+            this.id = id;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getNamespace() {
+            return namespace;
     }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
+    public void setNamespace(String id) {
+            this.namespace = namespace;
     }
+
+    public String getName() {
+            return name;
+    }
+
+    public void setName(String id) {
+            this.name = name;
+    }
+
+    public String getDescription() {
+            return description;
+    }
+
+    public void setDescription(String id) {
+            this.description = description;
+    }
+
+    public String getVersion() {
+            return version;
+    }
+
+    public void setVersion(String id) {
+            this.version = version;
+    }
+
+    public String getOutputdir() {
+            return outputdir;
+    }
+
+    public void setOutputdir(String id) {
+            this.outputdir = outputdir;
+    }
+
+    public String getType() {
+            return type;
+    }
+
+    public void setType(String id) {
+            this.type = type;
+    }
+
+    public String getOptions() {
+            return options;
+    }
+
+    public void setOptions(String id) {
+            this.options = options;
+    }
+
+    public String getViewLayout() {
+            return viewLayout;
+    }
+
+    public void setViewLayout(String id) {
+            this.viewLayout = viewLayout;
+    }
+
+    public String getFormLayout() {
+            return formLayout;
+    }
+
+    public void setFormLayout(String id) {
+            this.formLayout = formLayout;
+    }
+
+    public String getAddLayout() {
+            return addLayout;
+    }
+
+    public void setAddLayout(String id) {
+            this.addLayout = addLayout;
+    }
+
+    public String getEditLayout() {
+            return editLayout;
+    }
+
+    public void setEditLayout(String id) {
+            this.editLayout = editLayout;
+    }
+
+    public String getXml() {
+            return xml;
+    }
+
+    public void setXml(String id) {
+            this.xml = xml;
+    }
+
 
     //database functions
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
@@ -97,8 +201,19 @@ public class Modules {
             if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(username);
-            values.add(password_hash);
+            values.add(id);
+            values.add(namespace);
+            values.add(name);
+            values.add(description);
+            values.add(version);
+            values.add(outputdir);
+            values.add(type);
+            values.add(options);
+            values.add(viewLayout);
+            values.add(formLayout);
+            values.add(addLayout);
+            values.add(editLayout);
+            values.add(xml);
 
             return values;
     }
