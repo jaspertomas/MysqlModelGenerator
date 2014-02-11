@@ -10,33 +10,53 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class User {
+public class Modules {
     //------------FIELDS-----------
-    public static final String tablename="users";
+    public static final String tablename="[tablesmall]";
     //field names
     public static String[] fields={
             "id"
-            ,"username"
-            ,"password_hash"
+            ,"namespace"
+            ,"name"
+            ,"description"
+            ,"version"
+            ,"outputdir"
+            ,"type"
+            ,"options"
+            ,"viewLayout"
+            ,"formLayout"
+            ,"addLayout"
+            ,"editLayout"
+            ,"xml"
             };
     //field types
     public static String[] fieldtypes={
-            "integer"
+            "bigint(11)"
+            ,"varchar(255)"
             ,"varchar(50)"
-            ,"varchar(40)"
+            ,"text"
+            ,"varchar(10)"
+            ,"varchar(255)"
+            ,"varchar(50)"
+            ,"varchar(255)"
+            ,"text"
+            ,"text"
+            ,"text"
+            ,"text"
+            ,"text"
             };
     //-----------------------
 
     String username="",password_hash="",id="";
-    public User() {
+    public Modules() {
     }
-    public User(ResultSet rs) {
+    public Modules(ResultSet rs) {
         try {
             id=rs.getString("id");
             username = rs.getString("username");
             password_hash = rs.getString("password_hash");
         } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -84,15 +104,15 @@ public class User {
     }
     public void delete()
     {
-            User.delete(this);
+            Modules.delete(this);
     }
     public void save()
     {
-            //if(User.getById(id)==null)
+            //if(Modules.getById(id)==null)
             if(id==null || id.toString().isEmpty() || id.toString().contentEquals("0"))
-                    User.insert(this);
+                    Modules.insert(this);
             else
-                    User.update(this);
+                    Modules.update(this);
     }
     public String toString()
     {
@@ -103,16 +123,16 @@ public class User {
 
     //-----------getter functions----------
     /*
-    public static User getByName(String name)
+    public static Modules getByName(String name)
     {
-            HashMap<String,User> map=select(" name = '"+name+"'");
-            for(User app:map.values())return app;
+            HashMap<String,Modules> map=select(" name = '"+name+"'");
+            for(Modules app:map.values())return app;
             return null;
     }	
     */
-    public static User getById(String id) {
-            HashMap<String,User> map=select(" id = '"+id+"'");
-            for(User app:map.values())return app;
+    public static Modules getById(String id) {
+            HashMap<String,Modules> map=select(" id = '"+id+"'");
+            for(Modules app:map.values())return app;
             return null;
     }
     //-----------database functions--------------
@@ -125,15 +145,15 @@ public class User {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(User item)
+    public static void delete(Modules item)
     {
         delete(item.getId());
     }
-    public static void insert(User item)
+    public static void insert(Modules item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -146,11 +166,11 @@ public class User {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(User item)
+    public static void update(Modules item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -159,11 +179,11 @@ public class User {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<String, User> select(String conditions)
+    public static HashMap<String, Modules> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -174,20 +194,20 @@ public class User {
 //                rs = st.executeQuery("SELECT VERSION()");
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<String, User> items=new HashMap<String, User>();
+                HashMap<String, Modules> items=new HashMap<String, Modules>();
                 while (rs.next()) {
-                    items.put(rs.getString("id"), new User(rs));
+                    items.put(rs.getString("id"), new Modules(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(User item,boolean withId)
+    public static String implodeValues(Modules item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -211,13 +231,13 @@ public class User {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(User item,boolean withId)
+    public static String implodeFieldsWithValues(Modules item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("User:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Modules:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -252,22 +272,6 @@ public class User {
     }
     public static void main(String args[])
     {
-        String url = "jdbc:mysql://localhost:3306/tmcuser";
-        String password = "password";
-
-        boolean result=MySqlDBHelper.init(url, "root", password);            
-
-        HashMap<String,User> users=User.select("");
-        for(String key:users.keySet())
-        {
-            User user=users.get(key);
-            System.out.println(key);
-            System.out.println(user);
-        }
-    }  
-/*
-    public static void main(String args[])
-    {
         String url = "jdbc:mysql://localhost:3306/jeegen";
         String password = "password";
 
@@ -281,6 +285,4 @@ public class User {
             System.out.println(user);
         }
     }  
- 
- */    
 }

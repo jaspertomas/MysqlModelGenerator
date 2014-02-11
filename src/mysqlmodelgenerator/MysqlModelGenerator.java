@@ -21,7 +21,7 @@ public class MysqlModelGenerator {
 
     public static void main(String args[])
     {
-        String databasename="tmcuser";
+        String databasename="jeegen";
         String password = "password";
         String username = "root";
         String url = "jdbc:mysql://localhost:3306/"+databasename;
@@ -66,6 +66,21 @@ public class MysqlModelGenerator {
     }
     public static String createModelFileContents(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
     {
+        table=capitalize(table);
+        int counter=0;
+        
+        String fieldsstring="";
+        for(int i=0;i<fields.size();i++)
+        {
+            fieldsstring+="\n            "+(i==0?"":",")+"\""+fields.get(i) +"\"";
+        }
+        
+        String fieldtypesstring="";
+        for(int i=0;i<fieldtypes.size();i++)
+        {
+            fieldtypesstring+="\n            "+(i==0?"":",")+"\""+fieldtypes.get(i) +"\"";
+        }
+        
         String output="package models;"
 +"\n"
 +"\nimport java.sql.Connection;"
@@ -80,18 +95,14 @@ public class MysqlModelGenerator {
 +"\n"
 +"\npublic class [table] {"
 +"\n    //------------FIELDS-----------"
-+"\n    public static final String tablename=\"users\";"
++"\n    public static final String tablename=\"[tablesmall]\";"
 +"\n    //field names"
 +"\n    public static String[] fields={"
-+"\n            \"id\""
-+"\n            ,\"username\""
-+"\n            ,\"password_hash\""
++fieldsstring
 +"\n            };"
 +"\n    //field types"
 +"\n    public static String[] fieldtypes={"
-+"\n            \"integer\""
-+"\n            ,\"varchar(50)\""
-+"\n            ,\"varchar(40)\""
++fieldtypesstring
 +"\n            };"
 +"\n    //-----------------------"
 +"\n"
@@ -320,7 +331,12 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n}"
 +"\n";
+        output=output.replace("[table]", table);
         
         return output;
+    }
+    public static String capitalize(String s)
+    {
+        return s.substring(0, 1).toUpperCase()+s.substring(1);
     }
 }
