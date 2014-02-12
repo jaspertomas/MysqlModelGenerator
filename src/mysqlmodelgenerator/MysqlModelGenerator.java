@@ -19,13 +19,15 @@ import utils.fileaccess.FileWriter;
  * @author jaspertomas
  */
 public class MysqlModelGenerator {
+    
+    static String database="tmcprogram3";
+    static String hostname="localhost";
+    static String username="root";
+    static String password="password";
 
     public static void main(String args[])
     {
-        String databasename="erp_development";
-        String password = "password";
-        String username = "root";
-        String url = "jdbc:mysql://localhost:3306/"+databasename;
+        String url = "jdbc:mysql://"+hostname+":3306/"+database;
 
         MySqlDBHelper.init(url, username, password);            
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -366,10 +368,10 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n    public static void main(String args[])"
 +"\n    {"
-+"\n        String database=\"erp_development\";"
-+"\n        String url = \"jdbc:mysql://localhost:3306/\"+database;"
-+"\n        String username=\"root\";"
-+"\n        String password = \"password\";"
++"\n        String database=\""+database+"\";"
++"\n        String url = \"jdbc:mysql://"+hostname+":3306/\"+database;"
++"\n        String username=\""+username+"\";"
++"\n        String password = \""+password+"\";"
 +"\n"
 +"\n        boolean result=MySqlDBHelper.init(url, username, password);            "
 +"\n"
@@ -403,11 +405,16 @@ public class MysqlModelGenerator {
     public static String datatypeFor(String type)
     {
         type=type.replaceAll("[,0-9]", "");
+        //System.out.println(type);
         if(type.contentEquals("int")||type.contentEquals("int()"))
             return "Integer";
-        else if(type.contains("varchar()"))
+        else if(type.contentEquals("varchar()"))
+            return "String";
+        else if(type.contentEquals("char()"))
             return "String";
         else if(type.contentEquals("text"))
+            return "String";
+        else if(type.contentEquals("tinytext"))
             return "String";
         else if(type.contentEquals("date"))
             return "Date";
@@ -425,6 +432,8 @@ public class MysqlModelGenerator {
             return "Boolean";
         else if(type.contentEquals("datetime"))
             return "Timestamp";
+        else if(type.contains("enum"))
+            return "String";
         else 
             return "";
 /*
@@ -487,7 +496,11 @@ public class MysqlModelGenerator {
             return "getInt";
         else if(type.contains("varchar()"))
             return "getString";
+        else if(type.contentEquals("char()"))
+            return "getString";
         else if(type.contentEquals("text"))
+            return "getString";
+        else if(type.contentEquals("tinytext"))
             return "getString";
         else if(type.contentEquals("date"))
             return "getDate";
@@ -505,6 +518,8 @@ public class MysqlModelGenerator {
             return "getBoolean";
         else if(type.contentEquals("datetime"))
             return "getTimestamp";
+        else if(type.contains("enum"))
+            return "getString";
         else 
             return "";  
     }    
@@ -515,7 +530,11 @@ public class MysqlModelGenerator {
             return ".toString()";
         else if(type.contains("varchar()"))
             return "";
+        else if(type.contentEquals("char()"))
+            return "";
         else if(type.contentEquals("text"))
+            return "";
+        else if(type.contentEquals("tinytext"))
             return "";
         else if(type.contentEquals("date"))
             return ".toString()";
@@ -533,6 +552,8 @@ public class MysqlModelGenerator {
             return ".toString()";
         else if(type.contentEquals("datetime"))
             return ".toString()";
+        else if(type.contains("enum"))
+            return "";
         else 
             return "";  
     }    

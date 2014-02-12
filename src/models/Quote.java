@@ -13,52 +13,72 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class Quote {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="quote";
     //field names
     public static String[] fields={
             "id"
-            ,"name"
-            ,"content"
-            ,"description"
-            ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"date"
+            ,"vendor_id"
+            ,"product_id"
+            ,"price"
+            ,"discrate"
+            ,"discamt"
+            ,"ref_class"
+            ,"ref_id"
+            ,"total"
+            ,"mine"
+            ,"is_cancelled"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
-            ,"varchar(50)"
-            ,"text"
-            ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
+            "int(11)"
+            ,"date"
             ,"int(11)"
+            ,"int(11)"
+            ,"decimal(10,2)"
+            ,"varchar(30)"
+            ,"decimal(10,2)"
+            ,"varchar(20)"
+            ,"int(11)"
+            ,"decimal(10,2)"
+            ,"tinyint(4)"
+            ,"tinyint(4)"
             };
     //-----------------------
 
     public Integer id;
-    public String name;
-    public String content;
-    public String description;
-    public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public Date date;
+    public Integer vendor_id;
+    public Integer product_id;
+    public BigDecimal price;
+    public String discrate;
+    public BigDecimal discamt;
+    public String ref_class;
+    public Integer ref_id;
+    public BigDecimal total;
+    public Integer mine;
+    public Integer is_cancelled;
 
-    public Notes() {
+    public Quote() {
     }
-    public Notes(ResultSet rs) {
+    public Quote(ResultSet rs) {
         try {
             id=rs.getInt("id");
-            name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
-            parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            date=rs.getDate("date");
+            vendor_id=rs.getInt("vendor_id");
+            product_id=rs.getInt("product_id");
+            price=rs.getBigDecimal("price");
+            discrate=rs.getString("discrate");
+            discamt=rs.getBigDecimal("discamt");
+            ref_class=rs.getString("ref_class");
+            ref_id=rs.getInt("ref_id");
+            total=rs.getBigDecimal("total");
+            mine=rs.getInt("mine");
+            is_cancelled=rs.getInt("is_cancelled");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Quote.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -76,52 +96,92 @@ public class Notes {
             this.id = id;
     }
 
-    public String getName() {
-            return name;
+    public Date getDate() {
+            return date;
     }
 
-    public void setName(String name) {
-            this.name = name;
+    public void setDate(Date date) {
+            this.date = date;
     }
 
-    public String getContent() {
-            return content;
+    public Integer getVendorId() {
+            return vendor_id;
     }
 
-    public void setContent(String content) {
-            this.content = content;
+    public void setVendorId(Integer vendor_id) {
+            this.vendor_id = vendor_id;
     }
 
-    public String getDescription() {
-            return description;
+    public Integer getProductId() {
+            return product_id;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
+    public void setProductId(Integer product_id) {
+            this.product_id = product_id;
     }
 
-    public Integer getParentId() {
-            return parent_id;
+    public BigDecimal getPrice() {
+            return price;
     }
 
-    public void setParentId(Integer parent_id) {
-            this.parent_id = parent_id;
+    public void setPrice(BigDecimal price) {
+            this.price = price;
     }
 
-    public String getStatus() {
-            return status;
+    public String getDiscrate() {
+            return discrate;
     }
 
-    public void setStatus(String status) {
-            this.status = status;
+    public void setDiscrate(String discrate) {
+            this.discrate = discrate;
     }
 
-    public Integer getPriority() {
-            return priority;
+    public BigDecimal getDiscamt() {
+            return discamt;
     }
 
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setDiscamt(BigDecimal discamt) {
+            this.discamt = discamt;
+    }
+
+    public String getRefClass() {
+            return ref_class;
+    }
+
+    public void setRefClass(String ref_class) {
+            this.ref_class = ref_class;
+    }
+
+    public Integer getRefId() {
+            return ref_id;
+    }
+
+    public void setRefId(Integer ref_id) {
+            this.ref_id = ref_id;
+    }
+
+    public BigDecimal getTotal() {
+            return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+            this.total = total;
+    }
+
+    public Integer getMine() {
+            return mine;
+    }
+
+    public void setMine(Integer mine) {
+            this.mine = mine;
+    }
+
+    public Integer getIsCancelled() {
+            return is_cancelled;
+    }
+
+    public void setIsCancelled(Integer is_cancelled) {
+            this.is_cancelled = is_cancelled;
     }
 
 
@@ -133,25 +193,30 @@ public class Notes {
 
             //add values for each field here
             values.add(id.toString());
-            values.add(name);
-            values.add(content);
-            values.add(description);
-            values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(date.toString());
+            values.add(vendor_id.toString());
+            values.add(product_id.toString());
+            values.add(price.toString());
+            values.add(discrate);
+            values.add(discamt.toString());
+            values.add(ref_class);
+            values.add(ref_id.toString());
+            values.add(total.toString());
+            values.add(mine.toString());
+            values.add(is_cancelled.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            Quote.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    Quote.insert(this);
             else
-                    Notes.update(this);
+                    Quote.update(this);
     }
     public String toString()
     {
@@ -162,16 +227,16 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static Quote getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Integer,Quote> map=select(" name = '"+name+"'");
+            for(Quote item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static Quote getById(Integer id) {
+            HashMap<Integer,Quote> map=select(" id = '"+id.toString()+"'");
+            for(Quote item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
@@ -184,15 +249,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Quote.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(Quote item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(Quote item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +270,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Quote.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(Quote item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +283,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Quote.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Integer, Quote> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +297,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Integer, Quote> items=new HashMap<Integer, Quote>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getInt("id"), new Quote(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Quote.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(Quote item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +334,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(Quote item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Quote:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +382,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
+        HashMap<Integer,Quote> items=Quote.select("");
         for(Integer key:items.keySet())
         {
-            Notes item=items.get(key);
+            Quote item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }

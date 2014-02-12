@@ -13,52 +13,48 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class SfGuardRememberKey {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="sf_guard_remember_key";
     //field names
     public static String[] fields={
             "id"
-            ,"name"
-            ,"content"
-            ,"description"
-            ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"user_id"
+            ,"remember_key"
+            ,"ip_address"
+            ,"created_at"
+            ,"updated_at"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
+            "bigint(20)"
+            ,"bigint(20)"
+            ,"varchar(32)"
             ,"varchar(50)"
-            ,"text"
-            ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
-            ,"int(11)"
+            ,"datetime"
+            ,"datetime"
             };
     //-----------------------
 
-    public Integer id;
-    public String name;
-    public String content;
-    public String description;
-    public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public Long id;
+    public Long user_id;
+    public String remember_key;
+    public String ip_address;
+    public Timestamp created_at;
+    public Timestamp updated_at;
 
-    public Notes() {
+    public SfGuardRememberKey() {
     }
-    public Notes(ResultSet rs) {
+    public SfGuardRememberKey(ResultSet rs) {
         try {
-            id=rs.getInt("id");
-            name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
-            parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            id=rs.getLong("id");
+            user_id=rs.getLong("user_id");
+            remember_key=rs.getString("remember_key");
+            ip_address=rs.getString("ip_address");
+            created_at=rs.getTimestamp("created_at");
+            updated_at=rs.getTimestamp("updated_at");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SfGuardRememberKey.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -68,60 +64,52 @@ public class Notes {
 //		return id.toString()+"-";
 //	}
 
-    public Integer getId() {
+    public Long getId() {
             return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
             this.id = id;
     }
 
-    public String getName() {
-            return name;
+    public Long getUserId() {
+            return user_id;
     }
 
-    public void setName(String name) {
-            this.name = name;
+    public void setUserId(Long user_id) {
+            this.user_id = user_id;
     }
 
-    public String getContent() {
-            return content;
+    public String getRememberKey() {
+            return remember_key;
     }
 
-    public void setContent(String content) {
-            this.content = content;
+    public void setRememberKey(String remember_key) {
+            this.remember_key = remember_key;
     }
 
-    public String getDescription() {
-            return description;
+    public String getIpAddress() {
+            return ip_address;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
+    public void setIpAddress(String ip_address) {
+            this.ip_address = ip_address;
     }
 
-    public Integer getParentId() {
-            return parent_id;
+    public Timestamp getCreatedAt() {
+            return created_at;
     }
 
-    public void setParentId(Integer parent_id) {
-            this.parent_id = parent_id;
+    public void setCreatedAt(Timestamp created_at) {
+            this.created_at = created_at;
     }
 
-    public String getStatus() {
-            return status;
+    public Timestamp getUpdatedAt() {
+            return updated_at;
     }
 
-    public void setStatus(String status) {
-            this.status = status;
-    }
-
-    public Integer getPriority() {
-            return priority;
-    }
-
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setUpdatedAt(Timestamp updated_at) {
+            this.updated_at = updated_at;
     }
 
 
@@ -133,25 +121,24 @@ public class Notes {
 
             //add values for each field here
             values.add(id.toString());
-            values.add(name);
-            values.add(content);
-            values.add(description);
-            values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(user_id.toString());
+            values.add(remember_key);
+            values.add(ip_address);
+            values.add(created_at.toString());
+            values.add(updated_at.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            SfGuardRememberKey.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    SfGuardRememberKey.insert(this);
             else
-                    Notes.update(this);
+                    SfGuardRememberKey.update(this);
     }
     public String toString()
     {
@@ -162,21 +149,21 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static SfGuardRememberKey getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Long,SfGuardRememberKey> map=select(" name = '"+name+"'");
+            for(SfGuardRememberKey item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static SfGuardRememberKey getById(Long id) {
+            HashMap<Long,SfGuardRememberKey> map=select(" id = '"+id.toString()+"'");
+            for(SfGuardRememberKey item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
 
-    public static void delete(Integer id)
+    public static void delete(Long id)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -184,15 +171,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SfGuardRememberKey.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(SfGuardRememberKey item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(SfGuardRememberKey item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +192,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SfGuardRememberKey.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(SfGuardRememberKey item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +205,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SfGuardRememberKey.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Long, SfGuardRememberKey> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +219,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Long, SfGuardRememberKey> items=new HashMap<Long, SfGuardRememberKey>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getLong("id"), new SfGuardRememberKey(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SfGuardRememberKey.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(SfGuardRememberKey item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +256,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(SfGuardRememberKey item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("SfGuardRememberKey:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +304,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
-        for(Integer key:items.keySet())
+        HashMap<Long,SfGuardRememberKey> items=SfGuardRememberKey.select("");
+        for(Long key:items.keySet())
         {
-            Notes item=items.get(key);
+            SfGuardRememberKey item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }

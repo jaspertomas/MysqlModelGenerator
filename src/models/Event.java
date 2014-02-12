@@ -13,52 +13,84 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class Event {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="event";
     //field names
     public static String[] fields={
             "id"
-            ,"name"
-            ,"content"
-            ,"description"
+            ,"type"
+            ,"parent_class"
             ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"parent_name"
+            ,"child_class"
+            ,"children_id"
+            ,"date"
+            ,"amount"
+            ,"detail1"
+            ,"detail2"
+            ,"detail3"
+            ,"notes"
+            ,"is_cancelled"
+            ,"checkcleardate"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
-            ,"varchar(50)"
-            ,"text"
-            ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
+            "int(11)"
+            ,"varchar(20)"
+            ,"varchar(20)"
             ,"int(11)"
+            ,"varchar(20)"
+            ,"varchar(20)"
+            ,"varchar(10)"
+            ,"date"
+            ,"decimal(10,2)"
+            ,"varchar(20)"
+            ,"varchar(20)"
+            ,"varchar(20)"
+            ,"text"
+            ,"tinyint(4)"
+            ,"date"
             };
     //-----------------------
 
     public Integer id;
-    public String name;
-    public String content;
-    public String description;
+    public String type;
+    public String parent_class;
     public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public String parent_name;
+    public String child_class;
+    public String children_id;
+    public Date date;
+    public BigDecimal amount;
+    public String detail1;
+    public String detail2;
+    public String detail3;
+    public String notes;
+    public Integer is_cancelled;
+    public Date checkcleardate;
 
-    public Notes() {
+    public Event() {
     }
-    public Notes(ResultSet rs) {
+    public Event(ResultSet rs) {
         try {
             id=rs.getInt("id");
-            name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
+            type=rs.getString("type");
+            parent_class=rs.getString("parent_class");
             parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            parent_name=rs.getString("parent_name");
+            child_class=rs.getString("child_class");
+            children_id=rs.getString("children_id");
+            date=rs.getDate("date");
+            amount=rs.getBigDecimal("amount");
+            detail1=rs.getString("detail1");
+            detail2=rs.getString("detail2");
+            detail3=rs.getString("detail3");
+            notes=rs.getString("notes");
+            is_cancelled=rs.getInt("is_cancelled");
+            checkcleardate=rs.getDate("checkcleardate");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -76,28 +108,20 @@ public class Notes {
             this.id = id;
     }
 
-    public String getName() {
-            return name;
+    public String getType() {
+            return type;
     }
 
-    public void setName(String name) {
-            this.name = name;
+    public void setType(String type) {
+            this.type = type;
     }
 
-    public String getContent() {
-            return content;
+    public String getParentClass() {
+            return parent_class;
     }
 
-    public void setContent(String content) {
-            this.content = content;
-    }
-
-    public String getDescription() {
-            return description;
-    }
-
-    public void setDescription(String description) {
-            this.description = description;
+    public void setParentClass(String parent_class) {
+            this.parent_class = parent_class;
     }
 
     public Integer getParentId() {
@@ -108,20 +132,92 @@ public class Notes {
             this.parent_id = parent_id;
     }
 
-    public String getStatus() {
-            return status;
+    public String getParentName() {
+            return parent_name;
     }
 
-    public void setStatus(String status) {
-            this.status = status;
+    public void setParentName(String parent_name) {
+            this.parent_name = parent_name;
     }
 
-    public Integer getPriority() {
-            return priority;
+    public String getChildClass() {
+            return child_class;
     }
 
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setChildClass(String child_class) {
+            this.child_class = child_class;
+    }
+
+    public String getChildrenId() {
+            return children_id;
+    }
+
+    public void setChildrenId(String children_id) {
+            this.children_id = children_id;
+    }
+
+    public Date getDate() {
+            return date;
+    }
+
+    public void setDate(Date date) {
+            this.date = date;
+    }
+
+    public BigDecimal getAmount() {
+            return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+            this.amount = amount;
+    }
+
+    public String getDetail1() {
+            return detail1;
+    }
+
+    public void setDetail1(String detail1) {
+            this.detail1 = detail1;
+    }
+
+    public String getDetail2() {
+            return detail2;
+    }
+
+    public void setDetail2(String detail2) {
+            this.detail2 = detail2;
+    }
+
+    public String getDetail3() {
+            return detail3;
+    }
+
+    public void setDetail3(String detail3) {
+            this.detail3 = detail3;
+    }
+
+    public String getNotes() {
+            return notes;
+    }
+
+    public void setNotes(String notes) {
+            this.notes = notes;
+    }
+
+    public Integer getIsCancelled() {
+            return is_cancelled;
+    }
+
+    public void setIsCancelled(Integer is_cancelled) {
+            this.is_cancelled = is_cancelled;
+    }
+
+    public Date getCheckcleardate() {
+            return checkcleardate;
+    }
+
+    public void setCheckcleardate(Date checkcleardate) {
+            this.checkcleardate = checkcleardate;
     }
 
 
@@ -133,25 +229,33 @@ public class Notes {
 
             //add values for each field here
             values.add(id.toString());
-            values.add(name);
-            values.add(content);
-            values.add(description);
+            values.add(type);
+            values.add(parent_class);
             values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(parent_name);
+            values.add(child_class);
+            values.add(children_id);
+            values.add(date.toString());
+            values.add(amount.toString());
+            values.add(detail1);
+            values.add(detail2);
+            values.add(detail3);
+            values.add(notes);
+            values.add(is_cancelled.toString());
+            values.add(checkcleardate.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            Event.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    Event.insert(this);
             else
-                    Notes.update(this);
+                    Event.update(this);
     }
     public String toString()
     {
@@ -162,16 +266,16 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static Event getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Integer,Event> map=select(" name = '"+name+"'");
+            for(Event item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static Event getById(Integer id) {
+            HashMap<Integer,Event> map=select(" id = '"+id.toString()+"'");
+            for(Event item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
@@ -184,15 +288,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(Event item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(Event item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +309,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(Event item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +322,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Integer, Event> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +336,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Integer, Event> items=new HashMap<Integer, Event>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getInt("id"), new Event(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(Event item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +373,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(Event item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Event:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +421,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
+        HashMap<Integer,Event> items=Event.select("");
         for(Integer key:items.keySet())
         {
-            Notes item=items.get(key);
+            Event item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }

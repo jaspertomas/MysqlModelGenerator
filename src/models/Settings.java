@@ -21,24 +21,18 @@ public class Settings {
             "id"
             ,"name"
             ,"value"
-            ,"created_at"
-            ,"updated_at"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"varchar(255)"
-            ,"varchar(255)"
-            ,"datetime"
-            ,"datetime"
+            ,"varchar(50)"
+            ,"varchar(10)"
             };
     //-----------------------
 
     public Integer id;
     public String name;
     public String value;
-    public Timestamp created_at;
-    public Timestamp updated_at;
 
     public Settings() {
     }
@@ -47,8 +41,6 @@ public class Settings {
             id=rs.getInt("id");
             name=rs.getString("name");
             value=rs.getString("value");
-            created_at=rs.getTimestamp("created_at");
-            updated_at=rs.getTimestamp("updated_at");
         } catch (SQLException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -84,22 +76,6 @@ public class Settings {
             this.value = value;
     }
 
-    public Timestamp getCreatedAt() {
-            return created_at;
-    }
-
-    public void setCreatedAt(Timestamp created_at) {
-            this.created_at = created_at;
-    }
-
-    public Timestamp getUpdatedAt() {
-            return updated_at;
-    }
-
-    public void setUpdatedAt(Timestamp updated_at) {
-            this.updated_at = updated_at;
-    }
-
 
     //database functions
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
@@ -111,8 +87,6 @@ public class Settings {
             values.add(id.toString());
             values.add(name);
             values.add(value);
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
 
             return values;
     }
@@ -284,7 +258,7 @@ public class Settings {
     }
     public static void main(String args[])
     {
-        String database="erp_development";
+        String database="tmcprogram3";
         String url = "jdbc:mysql://localhost:3306/"+database;
         String username="root";
         String password = "password";

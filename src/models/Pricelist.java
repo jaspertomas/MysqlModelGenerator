@@ -13,52 +13,40 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class Pricelist {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="pricelist";
     //field names
     public static String[] fields={
             "id"
             ,"name"
-            ,"content"
-            ,"description"
-            ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"date"
+            ,"vendor_id"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
-            ,"varchar(50)"
-            ,"text"
+            "int(11)"
             ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
+            ,"date"
             ,"int(11)"
             };
     //-----------------------
 
     public Integer id;
     public String name;
-    public String content;
-    public String description;
-    public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public Date date;
+    public Integer vendor_id;
 
-    public Notes() {
+    public Pricelist() {
     }
-    public Notes(ResultSet rs) {
+    public Pricelist(ResultSet rs) {
         try {
             id=rs.getInt("id");
             name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
-            parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            date=rs.getDate("date");
+            vendor_id=rs.getInt("vendor_id");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pricelist.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -84,44 +72,20 @@ public class Notes {
             this.name = name;
     }
 
-    public String getContent() {
-            return content;
+    public Date getDate() {
+            return date;
     }
 
-    public void setContent(String content) {
-            this.content = content;
+    public void setDate(Date date) {
+            this.date = date;
     }
 
-    public String getDescription() {
-            return description;
+    public Integer getVendorId() {
+            return vendor_id;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
-    }
-
-    public Integer getParentId() {
-            return parent_id;
-    }
-
-    public void setParentId(Integer parent_id) {
-            this.parent_id = parent_id;
-    }
-
-    public String getStatus() {
-            return status;
-    }
-
-    public void setStatus(String status) {
-            this.status = status;
-    }
-
-    public Integer getPriority() {
-            return priority;
-    }
-
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setVendorId(Integer vendor_id) {
+            this.vendor_id = vendor_id;
     }
 
 
@@ -134,24 +98,21 @@ public class Notes {
             //add values for each field here
             values.add(id.toString());
             values.add(name);
-            values.add(content);
-            values.add(description);
-            values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(date.toString());
+            values.add(vendor_id.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            Pricelist.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    Pricelist.insert(this);
             else
-                    Notes.update(this);
+                    Pricelist.update(this);
     }
     public String toString()
     {
@@ -162,16 +123,16 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static Pricelist getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Integer,Pricelist> map=select(" name = '"+name+"'");
+            for(Pricelist item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static Pricelist getById(Integer id) {
+            HashMap<Integer,Pricelist> map=select(" id = '"+id.toString()+"'");
+            for(Pricelist item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
@@ -184,15 +145,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pricelist.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(Pricelist item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(Pricelist item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +166,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pricelist.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(Pricelist item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +179,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Pricelist.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Integer, Pricelist> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +193,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Integer, Pricelist> items=new HashMap<Integer, Pricelist>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getInt("id"), new Pricelist(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Pricelist.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(Pricelist item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +230,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(Pricelist item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Pricelist:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +278,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
+        HashMap<Integer,Pricelist> items=Pricelist.select("");
         for(Integer key:items.keySet())
         {
-            Notes item=items.get(key);
+            Pricelist item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }

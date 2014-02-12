@@ -21,24 +21,18 @@ public class Terms {
             "id"
             ,"name"
             ,"days"
-            ,"created_at"
-            ,"updated_at"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"varchar(255)"
+            ,"varchar(20)"
             ,"int(11)"
-            ,"datetime"
-            ,"datetime"
             };
     //-----------------------
 
     public Integer id;
     public String name;
     public Integer days;
-    public Timestamp created_at;
-    public Timestamp updated_at;
 
     public Terms() {
     }
@@ -47,8 +41,6 @@ public class Terms {
             id=rs.getInt("id");
             name=rs.getString("name");
             days=rs.getInt("days");
-            created_at=rs.getTimestamp("created_at");
-            updated_at=rs.getTimestamp("updated_at");
         } catch (SQLException ex) {
             Logger.getLogger(Terms.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -84,22 +76,6 @@ public class Terms {
             this.days = days;
     }
 
-    public Timestamp getCreatedAt() {
-            return created_at;
-    }
-
-    public void setCreatedAt(Timestamp created_at) {
-            this.created_at = created_at;
-    }
-
-    public Timestamp getUpdatedAt() {
-            return updated_at;
-    }
-
-    public void setUpdatedAt(Timestamp updated_at) {
-            this.updated_at = updated_at;
-    }
-
 
     //database functions
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
@@ -111,8 +87,6 @@ public class Terms {
             values.add(id.toString());
             values.add(name);
             values.add(days.toString());
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
 
             return values;
     }
@@ -284,7 +258,7 @@ public class Terms {
     }
     public static void main(String args[])
     {
-        String database="erp_development";
+        String database="tmcprogram3";
         String url = "jdbc:mysql://localhost:3306/"+database;
         String username="root";
         String password = "password";

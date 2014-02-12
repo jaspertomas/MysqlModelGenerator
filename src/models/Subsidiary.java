@@ -13,52 +13,44 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class Subsidiary {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="subsidiary";
     //field names
     public static String[] fields={
             "id"
+            ,"code"
             ,"name"
-            ,"content"
-            ,"description"
-            ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"account_code"
+            ,"fund_id"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
-            ,"varchar(50)"
-            ,"text"
-            ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
-            ,"int(11)"
+            "bigint(20)"
+            ,"varchar(30)"
+            ,"varchar(150)"
+            ,"varchar(10)"
+            ,"bigint(20)"
             };
     //-----------------------
 
-    public Integer id;
+    public Long id;
+    public String code;
     public String name;
-    public String content;
-    public String description;
-    public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public String account_code;
+    public Long fund_id;
 
-    public Notes() {
+    public Subsidiary() {
     }
-    public Notes(ResultSet rs) {
+    public Subsidiary(ResultSet rs) {
         try {
-            id=rs.getInt("id");
+            id=rs.getLong("id");
+            code=rs.getString("code");
             name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
-            parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            account_code=rs.getString("account_code");
+            fund_id=rs.getLong("fund_id");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Subsidiary.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -68,12 +60,20 @@ public class Notes {
 //		return id.toString()+"-";
 //	}
 
-    public Integer getId() {
+    public Long getId() {
             return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
             this.id = id;
+    }
+
+    public String getCode() {
+            return code;
+    }
+
+    public void setCode(String code) {
+            this.code = code;
     }
 
     public String getName() {
@@ -84,44 +84,20 @@ public class Notes {
             this.name = name;
     }
 
-    public String getContent() {
-            return content;
+    public String getAccountCode() {
+            return account_code;
     }
 
-    public void setContent(String content) {
-            this.content = content;
+    public void setAccountCode(String account_code) {
+            this.account_code = account_code;
     }
 
-    public String getDescription() {
-            return description;
+    public Long getFundId() {
+            return fund_id;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
-    }
-
-    public Integer getParentId() {
-            return parent_id;
-    }
-
-    public void setParentId(Integer parent_id) {
-            this.parent_id = parent_id;
-    }
-
-    public String getStatus() {
-            return status;
-    }
-
-    public void setStatus(String status) {
-            this.status = status;
-    }
-
-    public Integer getPriority() {
-            return priority;
-    }
-
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setFundId(Long fund_id) {
+            this.fund_id = fund_id;
     }
 
 
@@ -133,25 +109,23 @@ public class Notes {
 
             //add values for each field here
             values.add(id.toString());
+            values.add(code);
             values.add(name);
-            values.add(content);
-            values.add(description);
-            values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(account_code);
+            values.add(fund_id.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            Subsidiary.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    Subsidiary.insert(this);
             else
-                    Notes.update(this);
+                    Subsidiary.update(this);
     }
     public String toString()
     {
@@ -162,21 +136,21 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static Subsidiary getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Long,Subsidiary> map=select(" name = '"+name+"'");
+            for(Subsidiary item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static Subsidiary getById(Long id) {
+            HashMap<Long,Subsidiary> map=select(" id = '"+id.toString()+"'");
+            for(Subsidiary item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
 
-    public static void delete(Integer id)
+    public static void delete(Long id)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -184,15 +158,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Subsidiary.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(Subsidiary item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(Subsidiary item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +179,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Subsidiary.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(Subsidiary item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +192,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Subsidiary.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Long, Subsidiary> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +206,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Long, Subsidiary> items=new HashMap<Long, Subsidiary>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getLong("id"), new Subsidiary(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Subsidiary.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(Subsidiary item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +243,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(Subsidiary item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Subsidiary:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +291,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
-        for(Integer key:items.keySet())
+        HashMap<Long,Subsidiary> items=Subsidiary.select("");
+        for(Long key:items.keySet())
         {
-            Notes item=items.get(key);
+            Subsidiary item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }

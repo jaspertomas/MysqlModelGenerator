@@ -13,52 +13,92 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Notes {
+public class Customer {
     //------------FIELDS-----------
-    public static final String tablename="notes";
+    public static final String tablename="customer";
     //field names
     public static String[] fields={
             "id"
             ,"name"
-            ,"content"
-            ,"description"
-            ,"parent_id"
-            ,"status"
-            ,"priority"
+            ,"tin_no"
+            ,"address"
+            ,"phone1"
+            ,"phone2"
+            ,"faxnum"
+            ,"email"
+            ,"note"
+            ,"rep"
+            ,"repno"
+            ,"rep2"
+            ,"rep2no"
+            ,"taxitem"
+            ,"notepad"
+            ,"salutation"
+            ,"is_suki"
             };
     //field types
     public static String[] fieldtypes={
-            "int(20)"
-            ,"varchar(50)"
-            ,"text"
+            "int(11)"
+            ,"char(60)"
+            ,"varchar(15)"
             ,"varchar(100)"
-            ,"int(20)"
-            ,"enum('Red','Orange','Yellow','Green','Blue','Indigo','Violet')"
-            ,"int(11)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"varchar(60)"
+            ,"varchar(50)"
+            ,"varchar(60)"
+            ,"varchar(50)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"char(60)"
+            ,"tinyint(11)"
             };
     //-----------------------
 
     public Integer id;
     public String name;
-    public String content;
-    public String description;
-    public Integer parent_id;
-    public String status;
-    public Integer priority;
+    public String tin_no;
+    public String address;
+    public String phone1;
+    public String phone2;
+    public String faxnum;
+    public String email;
+    public String note;
+    public String rep;
+    public String repno;
+    public String rep2;
+    public String rep2no;
+    public String taxitem;
+    public String notepad;
+    public String salutation;
+    public Integer is_suki;
 
-    public Notes() {
+    public Customer() {
     }
-    public Notes(ResultSet rs) {
+    public Customer(ResultSet rs) {
         try {
             id=rs.getInt("id");
             name=rs.getString("name");
-            content=rs.getString("content");
-            description=rs.getString("description");
-            parent_id=rs.getInt("parent_id");
-            status=rs.getString("status");
-            priority=rs.getInt("priority");
+            tin_no=rs.getString("tin_no");
+            address=rs.getString("address");
+            phone1=rs.getString("phone1");
+            phone2=rs.getString("phone2");
+            faxnum=rs.getString("faxnum");
+            email=rs.getString("email");
+            note=rs.getString("note");
+            rep=rs.getString("rep");
+            repno=rs.getString("repno");
+            rep2=rs.getString("rep2");
+            rep2no=rs.getString("rep2no");
+            taxitem=rs.getString("taxitem");
+            notepad=rs.getString("notepad");
+            salutation=rs.getString("salutation");
+            is_suki=rs.getInt("is_suki");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -84,44 +124,124 @@ public class Notes {
             this.name = name;
     }
 
-    public String getContent() {
-            return content;
+    public String getTinNo() {
+            return tin_no;
     }
 
-    public void setContent(String content) {
-            this.content = content;
+    public void setTinNo(String tin_no) {
+            this.tin_no = tin_no;
     }
 
-    public String getDescription() {
-            return description;
+    public String getAddress() {
+            return address;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
+    public void setAddress(String address) {
+            this.address = address;
     }
 
-    public Integer getParentId() {
-            return parent_id;
+    public String getPhone1() {
+            return phone1;
     }
 
-    public void setParentId(Integer parent_id) {
-            this.parent_id = parent_id;
+    public void setPhone1(String phone1) {
+            this.phone1 = phone1;
     }
 
-    public String getStatus() {
-            return status;
+    public String getPhone2() {
+            return phone2;
     }
 
-    public void setStatus(String status) {
-            this.status = status;
+    public void setPhone2(String phone2) {
+            this.phone2 = phone2;
     }
 
-    public Integer getPriority() {
-            return priority;
+    public String getFaxnum() {
+            return faxnum;
     }
 
-    public void setPriority(Integer priority) {
-            this.priority = priority;
+    public void setFaxnum(String faxnum) {
+            this.faxnum = faxnum;
+    }
+
+    public String getEmail() {
+            return email;
+    }
+
+    public void setEmail(String email) {
+            this.email = email;
+    }
+
+    public String getNote() {
+            return note;
+    }
+
+    public void setNote(String note) {
+            this.note = note;
+    }
+
+    public String getRep() {
+            return rep;
+    }
+
+    public void setRep(String rep) {
+            this.rep = rep;
+    }
+
+    public String getRepno() {
+            return repno;
+    }
+
+    public void setRepno(String repno) {
+            this.repno = repno;
+    }
+
+    public String getRep2() {
+            return rep2;
+    }
+
+    public void setRep2(String rep2) {
+            this.rep2 = rep2;
+    }
+
+    public String getRep2no() {
+            return rep2no;
+    }
+
+    public void setRep2no(String rep2no) {
+            this.rep2no = rep2no;
+    }
+
+    public String getTaxitem() {
+            return taxitem;
+    }
+
+    public void setTaxitem(String taxitem) {
+            this.taxitem = taxitem;
+    }
+
+    public String getNotepad() {
+            return notepad;
+    }
+
+    public void setNotepad(String notepad) {
+            this.notepad = notepad;
+    }
+
+    public String getSalutation() {
+            return salutation;
+    }
+
+    public void setSalutation(String salutation) {
+            this.salutation = salutation;
+    }
+
+    public Integer getIsSuki() {
+            return is_suki;
+    }
+
+    public void setIsSuki(Integer is_suki) {
+            this.is_suki = is_suki;
     }
 
 
@@ -134,24 +254,34 @@ public class Notes {
             //add values for each field here
             values.add(id.toString());
             values.add(name);
-            values.add(content);
-            values.add(description);
-            values.add(parent_id.toString());
-            values.add(status);
-            values.add(priority.toString());
+            values.add(tin_no);
+            values.add(address);
+            values.add(phone1);
+            values.add(phone2);
+            values.add(faxnum);
+            values.add(email);
+            values.add(note);
+            values.add(rep);
+            values.add(repno);
+            values.add(rep2);
+            values.add(rep2no);
+            values.add(taxitem);
+            values.add(notepad);
+            values.add(salutation);
+            values.add(is_suki.toString());
 
             return values;
     }
     public void delete()
     {
-            Notes.delete(this);
+            Customer.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Notes.insert(this);
+                    Customer.insert(this);
             else
-                    Notes.update(this);
+                    Customer.update(this);
     }
     public String toString()
     {
@@ -162,16 +292,16 @@ public class Notes {
 
     //-----------getter functions----------
     /*
-    public static Notes getByName(String name)
+    public static Customer getByName(String name)
     {
-            HashMap<Integer,Notes> map=select(" name = '"+name+"'");
-            for(Notes item:map.values())return item;
+            HashMap<Integer,Customer> map=select(" name = '"+name+"'");
+            for(Customer item:map.values())return item;
             return null;
     }	
     */
-    public static Notes getById(Integer id) {
-            HashMap<Integer,Notes> map=select(" id = '"+id.toString()+"'");
-            for(Notes item:map.values())return item;
+    public static Customer getById(Integer id) {
+            HashMap<Integer,Customer> map=select(" id = '"+id.toString()+"'");
+            for(Customer item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
@@ -184,15 +314,15 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Notes item)
+    public static void delete(Customer item)
     {
         delete(item.getId());
     }
-    public static void insert(Notes item)
+    public static void insert(Customer item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -205,11 +335,11 @@ public class Notes {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Notes item)
+    public static void update(Customer item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -218,11 +348,11 @@ public class Notes {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Integer, Notes> select(String conditions)
+    public static HashMap<Integer, Customer> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -232,20 +362,20 @@ public class Notes {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Integer, Notes> items=new HashMap<Integer, Notes>();
+                HashMap<Integer, Customer> items=new HashMap<Integer, Customer>();
                 while (rs.next()) {
-                    items.put(rs.getInt("id"), new Notes(rs));
+                    items.put(rs.getInt("id"), new Customer(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Notes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Customer.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Notes item,boolean withId)
+    public static String implodeValues(Customer item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -269,13 +399,13 @@ public class Notes {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Notes item,boolean withId)
+    public static String implodeFieldsWithValues(Customer item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Notes:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Customer:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -317,10 +447,10 @@ public class Notes {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        HashMap<Integer,Notes> items=Notes.select("");
+        HashMap<Integer,Customer> items=Customer.select("");
         for(Integer key:items.keySet())
         {
-            Notes item=items.get(key);
+            Customer item=items.get(key);
             System.out.println(key);
             System.out.println(item);
         }
