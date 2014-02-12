@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import utils.MySqlDBHelper;
 import utils.fileaccess.FileWriter;
 
@@ -21,7 +22,7 @@ public class MysqlModelGenerator {
 
     public static void main(String args[])
     {
-        String databasename="jeegen";
+        String databasename="erp_development";
         String password = "password";
         String username = "root";
         String url = "jdbc:mysql://localhost:3306/"+databasename;
@@ -84,6 +85,7 @@ public class MysqlModelGenerator {
         String idfield=fields.get(0);
         String idfieldtype=fieldtypes.get(0);
         String idfieldtypestringifier=stringifier(fieldtypes.get(0));
+        String iddatatype=datatypeFor(fieldtypes.get(0));
         
         String gettersandsetters="";
         String datatype="";
@@ -131,7 +133,7 @@ public class MysqlModelGenerator {
         }
         
         String savestring="";
-        if(datatypeFor(idfieldtype).contentEquals("String"))
+        if(iddatatype.contentEquals("String"))
             savestring="\n            if("+idfield+"==null || "+idfield+".isEmpty() )";
         else
             savestring="\n            if("+idfield+"==null || "+idfield+"==0)";
@@ -139,10 +141,13 @@ public class MysqlModelGenerator {
         
         String output="package models;"
 +"\n"
++"\nimport java.math.BigDecimal;"
 +"\nimport java.sql.Connection;"
 +"\nimport java.sql.ResultSet;"
 +"\nimport java.sql.SQLException;"
 +"\nimport java.sql.Statement;"
++"\nimport java.sql.Date;"
++"\nimport java.sql.Timestamp;"
 +"\nimport java.util.ArrayList;"
 +"\nimport java.util.HashMap;"
 +"\nimport java.util.logging.Level;"
@@ -215,19 +220,19 @@ public class MysqlModelGenerator {
 +"\n    /*"
 +"\n    public static [tableCaps] getByName(String name)"
 +"\n    {"
-+"\n            HashMap<String,[tableCaps]> map=select(\" name = '\"+name+\"'\");"
++"\n            HashMap<"+iddatatype+",[tableCaps]> map=select(\" name = '\"+name+\"'\");"
 +"\n            for([tableCaps] item:map.values())return item;"
 +"\n            return null;"
 +"\n    }	"
 +"\n    */"
-+"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+datatypeFor(idfieldtype)+" "+idfield+") {"
-+"\n            HashMap<String,[tableCaps]> map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
++"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+iddatatype+" "+idfield+") {"
++"\n            HashMap<"+iddatatype+",[tableCaps]> map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
 +"\n            for([tableCaps] item:map.values())return item;"
 +"\n            return null;"
 +"\n    }"
 +"\n    //-----------database functions--------------"
 +"\n"
-+"\n    public static void delete("+datatypeFor(idfieldtype)+" id)"
++"\n    public static void delete("+iddatatype+" "+idfield+")"
 +"\n    {"
 +"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();            "
 +"\n        Statement st = null;"
@@ -267,13 +272,13 @@ public class MysqlModelGenerator {
 +"\n        boolean withid=false;"
 +"\n        try { "
 +"\n            st = conn.createStatement();"
-+"\n            st.executeUpdate(\"update \"+tablename+\" set \"+implodeFieldsWithValues(item,false)+\" where id = '\"+item.getId()+\"';\");"
++"\n            st.executeUpdate(\"update \"+tablename+\" set \"+implodeFieldsWithValues(item,false)+\" where "+idfield+" = '\"+item.get"+toCamelCase(idfield)+"()"+idfieldtypestringifier+"+\"';\");"
 +"\n        } catch (SQLException ex) {"
 +"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
-+"\n    public static HashMap<String, [tableCaps]> select(String conditions)"
++"\n    public static HashMap<"+iddatatype+", [tableCaps]> select(String conditions)"
 +"\n    {"
 +"\n        if(conditions.isEmpty())conditions = \"1\";"
 +"\n            Connection conn=MySqlDBHelper.getInstance().getConnection();"
@@ -281,12 +286,11 @@ public class MysqlModelGenerator {
 +"\n            ResultSet rs = null;"
 +"\n            try { "
 +"\n                st = conn.createStatement();"
-+"\n//                rs = st.executeQuery(\"SELECT VERSION()\");"
 +"\n                rs = st.executeQuery(\"SELECT * from \"+tablename+\" where \"+conditions);"
 +"\n"
-+"\n                HashMap<String, [tableCaps]> items=new HashMap<String, [tableCaps]>();"
++"\n                HashMap<"+iddatatype+", [tableCaps]> items=new HashMap<"+iddatatype+", [tableCaps]>();"
 +"\n                while (rs.next()) {"
-+"\n                    items.put(rs.getString(\"id\"), new [tableCaps](rs));"
++"\n                    items.put(rs."+rsGetterFor(idfieldtype)+"(\""+idfield+"\"), new [tableCaps](rs));"
 +"\n                }"
 +"\n                return items;"
 +"\n            } catch (SQLException ex) {"
@@ -314,7 +318,7 @@ public class MysqlModelGenerator {
 +"\n            String output=\"\";"
 +"\n            for(String field:fields)"
 +"\n            {"
-+"\n                    if(!withId && field.contentEquals(\"id\"))continue;"
++"\n                    if(!withId && field.contentEquals(\""+idfield+"\"))continue;"
 +"\n                    if(!output.isEmpty())"
 +"\n                            output+=\",\";"
 +"\n                    output+=field;"
@@ -333,7 +337,7 @@ public class MysqlModelGenerator {
 +"\n            String output=\"\";"
 +"\n            for(int i=0;i<fields.length;i++)"
 +"\n            {"
-+"\n                    if(!withId && fields[i].contentEquals(\"id\"))continue;"
++"\n                    if(!withId && fields[i].contentEquals(\""+idfield+"\"))continue;"
 +"\n                    if(!output.isEmpty())"
 +"\n                            output+=\",\";"
 +"\n                    output+=fields[i]+\"='\"+values.get(i)+\"'\";"
@@ -360,6 +364,23 @@ public class MysqlModelGenerator {
 +"\n    {"
 +"\n            return \"DROP TABLE IF EXISTS \"+tablename;"
 +"\n    }"
++"\n    public static void main(String args[])"
++"\n    {"
++"\n        String database=\"erp_development\";"
++"\n        String url = \"jdbc:mysql://localhost:3306/\"+database;"
++"\n        String username=\"root\";"
++"\n        String password = \"password\";"
++"\n"
++"\n        boolean result=MySqlDBHelper.init(url, username, password);            "
++"\n"
++"\n        HashMap<"+iddatatype+",[tableCaps]> items=[tableCaps].select(\"\");"
++"\n        for("+iddatatype+" key:items.keySet())"
++"\n        {"
++"\n            [tableCaps] item=items.get(key);"
++"\n            System.out.println(key);"
++"\n            System.out.println(item);"
++"\n        }"
++"\n    } "
 +"\n}"
 +"\n";
         output=output.replace("[tableCaps]", tablecaps);
@@ -381,7 +402,7 @@ public class MysqlModelGenerator {
     }
     public static String datatypeFor(String type)
     {
-        type=type.replaceAll("[0-9]", "");
+        type=type.replaceAll("[,0-9]", "");
         if(type.contentEquals("int")||type.contentEquals("int()"))
             return "Integer";
         else if(type.contains("varchar()"))
@@ -394,14 +415,16 @@ public class MysqlModelGenerator {
             return "Long";
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
             return "Integer";
-        else if(type.contentEquals("decimal"))
-            return "Decimal";
-        else if(type.contentEquals("float"))
+        else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
+            return "BigDecimal";
+        else if(type.contentEquals("float")||type.contentEquals("float()"))
             return "Float";
-        else if(type.contentEquals("double"))
+        else if(type.contentEquals("double")||type.contentEquals("double()"))
             return "Double";
-        else if(type.contentEquals("boolean"))
+        else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
             return "Boolean";
+        else if(type.contentEquals("datetime"))
+            return "Timestamp";
         else 
             return "";
 /*
@@ -459,7 +482,7 @@ public class MysqlModelGenerator {
     }
     public static String rsGetterFor(String type)
     {
-        type=type.replaceAll("[0-9]", "");
+        type=type.replaceAll("[,0-9]", "");
         if(type.contentEquals("int")||type.contentEquals("int()"))
             return "getInt";
         else if(type.contains("varchar()"))
@@ -472,22 +495,22 @@ public class MysqlModelGenerator {
             return "getLong";
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
             return "getInt";
-        else if(type.contentEquals("decimal"))
-            return "getDecimal";
-        else if(type.contentEquals("float"))
+        else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
+            return "getBigDecimal";
+        else if(type.contentEquals("float")||type.contentEquals("float()"))
             return "getFloat";
-        else if(type.contentEquals("double"))
+        else if(type.contentEquals("double")||type.contentEquals("double()"))
             return "getDouble";
-        else if(type.contentEquals("real"))
-            return "getReal";
-        else if(type.contentEquals("boolean"))
+        else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
             return "getBoolean";
+        else if(type.contentEquals("datetime"))
+            return "getTimestamp";
         else 
             return "";  
     }    
     public static String stringifier(String type)
     {
-        type=type.replaceAll("[0-9]", "");
+        type=type.replaceAll("[,0-9]", "");
         if(type.contentEquals("int")||type.contentEquals("int()"))
             return ".toString()";
         else if(type.contains("varchar()"))
@@ -500,18 +523,18 @@ public class MysqlModelGenerator {
             return ".toString()";
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
             return ".toString()";
-        else if(type.contentEquals("decimal"))
+        else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
             return ".toString()";
-        else if(type.contentEquals("float"))
+        else if(type.contentEquals("float")||type.contentEquals("float()"))
             return ".toString()";
-        else if(type.contentEquals("double"))
+        else if(type.contentEquals("double")||type.contentEquals("double()"))
             return ".toString()";
-        else if(type.contentEquals("real"))
-            return "";
-        else if(type.contentEquals("boolean"))
+        else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
+            return ".toString()";
+        else if(type.contentEquals("datetime"))
             return ".toString()";
         else 
             return "";  
     }    
-
+     
 }

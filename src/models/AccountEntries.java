@@ -1,85 +1,84 @@
 package models;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
 
-public class Modules {
+public class AccountEntries {
     //------------FIELDS-----------
-    public static final String tablename="modules";
+    public static final String tablename="account_entries";
     //field names
     public static String[] fields={
             "id"
-            ,"namespace"
-            ,"name"
-            ,"description"
-            ,"version"
-            ,"outputdir"
+            ,"account_id"
+            ,"qty"
+            ,"date"
+            ,"balance"
+            ,"ref_class"
+            ,"ref_id"
+            ,"priority"
             ,"type"
-            ,"options"
-            ,"viewLayout"
-            ,"formLayout"
-            ,"addLayout"
-            ,"editLayout"
-            ,"xml"
+            ,"description"
+            ,"created_at"
+            ,"updated_at"
             };
     //field types
     public static String[] fieldtypes={
-            "bigint(11)"
+            "int(11)"
+            ,"int(11)"
+            ,"decimal(10,0)"
+            ,"date"
+            ,"decimal(10,0)"
             ,"varchar(255)"
-            ,"varchar(50)"
-            ,"text"
-            ,"varchar(10)"
+            ,"int(11)"
+            ,"int(11)"
             ,"varchar(255)"
-            ,"varchar(50)"
             ,"varchar(255)"
-            ,"text"
-            ,"text"
-            ,"text"
-            ,"text"
-            ,"text"
+            ,"datetime"
+            ,"datetime"
             };
     //-----------------------
 
-    public Long id;
-    public String namespace;
-    public String name;
-    public String description;
-    public String version;
-    public String outputdir;
+    public Integer id;
+    public Integer account_id;
+    public BigDecimal qty;
+    public Date date;
+    public BigDecimal balance;
+    public String ref_class;
+    public Integer ref_id;
+    public Integer priority;
     public String type;
-    public String options;
-    public String viewLayout;
-    public String formLayout;
-    public String addLayout;
-    public String editLayout;
-    public String xml;
+    public String description;
+    public Timestamp created_at;
+    public Timestamp updated_at;
 
-    public Modules() {
+    public AccountEntries() {
     }
-    public Modules(ResultSet rs) {
+    public AccountEntries(ResultSet rs) {
         try {
-            id=rs.getLong("id");
-            namespace=rs.getString("namespace");
-            name=rs.getString("name");
-            description=rs.getString("description");
-            version=rs.getString("version");
-            outputdir=rs.getString("outputdir");
+            id=rs.getInt("id");
+            account_id=rs.getInt("account_id");
+            qty=rs.getBigDecimal("qty");
+            date=rs.getDate("date");
+            balance=rs.getBigDecimal("balance");
+            ref_class=rs.getString("ref_class");
+            ref_id=rs.getInt("ref_id");
+            priority=rs.getInt("priority");
             type=rs.getString("type");
-            options=rs.getString("options");
-            viewLayout=rs.getString("viewLayout");
-            formLayout=rs.getString("formLayout");
-            addLayout=rs.getString("addLayout");
-            editLayout=rs.getString("editLayout");
-            xml=rs.getString("xml");
+            description=rs.getString("description");
+            created_at=rs.getTimestamp("created_at");
+            updated_at=rs.getTimestamp("updated_at");
         } catch (SQLException ex) {
-            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountEntries.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -89,52 +88,68 @@ public class Modules {
 //		return id.toString()+"-";
 //	}
 
-    public Long getId() {
+    public Integer getId() {
             return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
             this.id = id;
     }
 
-    public String getNamespace() {
-            return namespace;
+    public Integer getAccountId() {
+            return account_id;
     }
 
-    public void setNamespace(String namespace) {
-            this.namespace = namespace;
+    public void setAccountId(Integer account_id) {
+            this.account_id = account_id;
     }
 
-    public String getName() {
-            return name;
+    public BigDecimal getQty() {
+            return qty;
     }
 
-    public void setName(String name) {
-            this.name = name;
+    public void setQty(BigDecimal qty) {
+            this.qty = qty;
     }
 
-    public String getDescription() {
-            return description;
+    public Date getDate() {
+            return date;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
+    public void setDate(Date date) {
+            this.date = date;
     }
 
-    public String getVersion() {
-            return version;
+    public BigDecimal getBalance() {
+            return balance;
     }
 
-    public void setVersion(String version) {
-            this.version = version;
+    public void setBalance(BigDecimal balance) {
+            this.balance = balance;
     }
 
-    public String getOutputdir() {
-            return outputdir;
+    public String getRefClass() {
+            return ref_class;
     }
 
-    public void setOutputdir(String outputdir) {
-            this.outputdir = outputdir;
+    public void setRefClass(String ref_class) {
+            this.ref_class = ref_class;
+    }
+
+    public Integer getRefId() {
+            return ref_id;
+    }
+
+    public void setRefId(Integer ref_id) {
+            this.ref_id = ref_id;
+    }
+
+    public Integer getPriority() {
+            return priority;
+    }
+
+    public void setPriority(Integer priority) {
+            this.priority = priority;
     }
 
     public String getType() {
@@ -145,52 +160,28 @@ public class Modules {
             this.type = type;
     }
 
-    public String getOptions() {
-            return options;
+    public String getDescription() {
+            return description;
     }
 
-    public void setOptions(String options) {
-            this.options = options;
+    public void setDescription(String description) {
+            this.description = description;
     }
 
-    public String getViewLayout() {
-            return viewLayout;
+    public Timestamp getCreatedAt() {
+            return created_at;
     }
 
-    public void setViewLayout(String viewLayout) {
-            this.viewLayout = viewLayout;
+    public void setCreatedAt(Timestamp created_at) {
+            this.created_at = created_at;
     }
 
-    public String getFormLayout() {
-            return formLayout;
+    public Timestamp getUpdatedAt() {
+            return updated_at;
     }
 
-    public void setFormLayout(String formLayout) {
-            this.formLayout = formLayout;
-    }
-
-    public String getAddLayout() {
-            return addLayout;
-    }
-
-    public void setAddLayout(String addLayout) {
-            this.addLayout = addLayout;
-    }
-
-    public String getEditLayout() {
-            return editLayout;
-    }
-
-    public void setEditLayout(String editLayout) {
-            this.editLayout = editLayout;
-    }
-
-    public String getXml() {
-            return xml;
-    }
-
-    public void setXml(String xml) {
-            this.xml = xml;
+    public void setUpdatedAt(Timestamp updated_at) {
+            this.updated_at = updated_at;
     }
 
 
@@ -202,31 +193,30 @@ public class Modules {
 
             //add values for each field here
             values.add(id.toString());
-            values.add(namespace);
-            values.add(name);
-            values.add(description);
-            values.add(version);
-            values.add(outputdir);
+            values.add(account_id.toString());
+            values.add(qty.toString());
+            values.add(date.toString());
+            values.add(balance.toString());
+            values.add(ref_class);
+            values.add(ref_id.toString());
+            values.add(priority.toString());
             values.add(type);
-            values.add(options);
-            values.add(viewLayout);
-            values.add(formLayout);
-            values.add(addLayout);
-            values.add(editLayout);
-            values.add(xml);
+            values.add(description);
+            values.add(created_at.toString());
+            values.add(updated_at.toString());
 
             return values;
     }
     public void delete()
     {
-            Modules.delete(this);
+            AccountEntries.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Modules.insert(this);
+                    AccountEntries.insert(this);
             else
-                    Modules.update(this);
+                    AccountEntries.update(this);
     }
     public String toString()
     {
@@ -237,21 +227,21 @@ public class Modules {
 
     //-----------getter functions----------
     /*
-    public static Modules getByName(String name)
+    public static AccountEntries getByName(String name)
     {
-            HashMap<Long,Modules> map=select(" name = '"+name+"'");
-            for(Modules item:map.values())return item;
+            HashMap<Integer,AccountEntries> map=select(" name = '"+name+"'");
+            for(AccountEntries item:map.values())return item;
             return null;
     }	
     */
-    public static Modules getById(Long id) {
-            HashMap<Long,Modules> map=select(" id = '"+id.toString()+"'");
-            for(Modules item:map.values())return item;
+    public static AccountEntries getById(Integer id) {
+            HashMap<Integer,AccountEntries> map=select(" id = '"+id.toString()+"'");
+            for(AccountEntries item:map.values())return item;
             return null;
     }
     //-----------database functions--------------
 
-    public static void delete(Long id)
+    public static void delete(Integer id)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -259,15 +249,15 @@ public class Modules {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountEntries.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(Modules item)
+    public static void delete(AccountEntries item)
     {
         delete(item.getId());
     }
-    public static void insert(Modules item)
+    public static void insert(AccountEntries item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -280,11 +270,11 @@ public class Modules {
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
         } catch (SQLException ex) {
-            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountEntries.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void update(Modules item)
+    public static void update(AccountEntries item)
     {
         Connection conn=MySqlDBHelper.getInstance().getConnection();            
         Statement st = null;
@@ -293,11 +283,11 @@ public class Modules {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountEntries.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static HashMap<Long, Modules> select(String conditions)
+    public static HashMap<Integer, AccountEntries> select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
             Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -307,20 +297,20 @@ public class Modules {
                 st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-                HashMap<Long, Modules> items=new HashMap<Long, Modules>();
+                HashMap<Integer, AccountEntries> items=new HashMap<Integer, AccountEntries>();
                 while (rs.next()) {
-                    items.put(rs.getLong("id"), new Modules(rs));
+                    items.put(rs.getInt("id"), new AccountEntries(rs));
                 }
                 return items;
             } catch (SQLException ex) {
-                Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(AccountEntries.class.getName()).log(Level.SEVERE, null, ex);
                 ex.printStackTrace();
                 return null;
             }
 
     }
     //-----------database helper functions--------------
-    public static String implodeValues(Modules item,boolean withId)
+    public static String implodeValues(AccountEntries item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -344,13 +334,13 @@ public class Modules {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(Modules item,boolean withId)
+    public static String implodeFieldsWithValues(AccountEntries item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("Modules:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("AccountEntries:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -383,4 +373,21 @@ public class Modules {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static void main(String args[])
+    {
+        String database="erp_development";
+        String url = "jdbc:mysql://localhost:3306/"+database;
+        String username="root";
+        String password = "password";
+
+        boolean result=MySqlDBHelper.init(url, username, password);            
+
+        HashMap<Integer,AccountEntries> items=AccountEntries.select("");
+        for(Integer key:items.keySet())
+        {
+            AccountEntries item=items.get(key);
+            System.out.println(key);
+            System.out.println(item);
+        }
+    } 
 }
