@@ -430,7 +430,7 @@ public class MysqlModelGenerator {
             return "Double";
         else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
             return "Boolean";
-        else if(type.contentEquals("datetime"))
+        else if(type.contentEquals("datetime")||type.contentEquals("timestamp"))
             return "Timestamp";
         else if(type.contains("enum"))
             return "String";
@@ -516,7 +516,7 @@ public class MysqlModelGenerator {
             return "getDouble";
         else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
             return "getBoolean";
-        else if(type.contentEquals("datetime"))
+        else if(type.contentEquals("datetime")||type.contentEquals("timestamp"))
             return "getTimestamp";
         else if(type.contains("enum"))
             return "getString";
@@ -550,7 +550,7 @@ public class MysqlModelGenerator {
             return ".toString()";
         else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
             return ".toString()";
-        else if(type.contentEquals("datetime"))
+        else if(type.contentEquals("datetime")||type.contentEquals("timestamp"))
             return ".toString()";
         else if(type.contains("enum"))
             return "";

@@ -59,7 +59,7 @@ public class Accountentry {
     public String type;
     public Integer is_cancelled;
     public String description;
-    public  created_at;
+    public Timestamp created_at;
 
     public Accountentry() {
     }
@@ -76,7 +76,7 @@ public class Accountentry {
             type=rs.getString("type");
             is_cancelled=rs.getInt("is_cancelled");
             description=rs.getString("description");
-            created_at=rs.("created_at");
+            created_at=rs.getTimestamp("created_at");
         } catch (SQLException ex) {
             Logger.getLogger(Accountentry.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -176,11 +176,11 @@ public class Accountentry {
             this.description = description;
     }
 
-    public  getCreatedAt() {
+    public Timestamp getCreatedAt() {
             return created_at;
     }
 
-    public void setCreatedAt( created_at) {
+    public void setCreatedAt(Timestamp created_at) {
             this.created_at = created_at;
     }
 
@@ -203,7 +203,7 @@ public class Accountentry {
             values.add(type);
             values.add(is_cancelled.toString());
             values.add(description);
-            values.add(created_at);
+            values.add(created_at.toString());
 
             return values;
     }
@@ -387,7 +387,7 @@ public class Accountentry {
         {
             Accountentry item=items.get(key);
             System.out.println(key);
-            System.out.println(item);
+            System.out.println(item.getCreatedAt());
         }
     } 
 }
