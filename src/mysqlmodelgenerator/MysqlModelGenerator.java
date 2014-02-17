@@ -292,7 +292,7 @@ public class MysqlModelGenerator {
 +"\n                    return rs.getInt(1);"
 +"\n                }"
 +"\n            } catch (SQLException ex) {"
-+"\n                Logger.getLogger(Invoice.class.getName()).log(Level.SEVERE, null, ex);"
++"\n                Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n                ex.printStackTrace();"
 +"\n            }"
 +"\n            return null;"
