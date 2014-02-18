@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class Subsidiary {
     //------------FIELDS-----------
@@ -143,7 +145,7 @@ public class Subsidiary {
     }	
     */
     public static Subsidiary getById(Long id) {
-            ArrayList<Subsidiary> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(Subsidiary item:map)return item;
             return null;
     }
@@ -214,7 +216,7 @@ public class Subsidiary {
             return null;
     }
 
-    public static ArrayList<Subsidiary> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -224,7 +226,7 @@ public class Subsidiary {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<Subsidiary> items=new ArrayList<Subsidiary>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new Subsidiary(rs));
                     //items.put(rs.getLong("id"), new Subsidiary(rs));
@@ -301,6 +303,16 @@ public class Subsidiary {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<Subsidiary>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -310,7 +322,7 @@ public class Subsidiary {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<Subsidiary> items=Subsidiary.select("");
+        RecordList items=Subsidiary.select("");
         for(Subsidiary item:items)
         {
             System.out.println(item);

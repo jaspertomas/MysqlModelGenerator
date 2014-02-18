@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class Purchasedetail {
     //------------FIELDS-----------
@@ -260,7 +262,7 @@ public class Purchasedetail {
     }	
     */
     public static Purchasedetail getById(Integer id) {
-            ArrayList<Purchasedetail> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(Purchasedetail item:map)return item;
             return null;
     }
@@ -331,7 +333,7 @@ public class Purchasedetail {
             return null;
     }
 
-    public static ArrayList<Purchasedetail> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -341,7 +343,7 @@ public class Purchasedetail {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<Purchasedetail> items=new ArrayList<Purchasedetail>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new Purchasedetail(rs));
                     //items.put(rs.getInt("id"), new Purchasedetail(rs));
@@ -418,6 +420,16 @@ public class Purchasedetail {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<Purchasedetail>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -427,7 +439,7 @@ public class Purchasedetail {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<Purchasedetail> items=Purchasedetail.select("");
+        RecordList items=Purchasedetail.select("");
         for(Purchasedetail item:items)
         {
             System.out.println(item);

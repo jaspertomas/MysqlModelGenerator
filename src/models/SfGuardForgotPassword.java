@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class SfGuardForgotPassword {
     //------------FIELDS-----------
@@ -156,7 +158,7 @@ public class SfGuardForgotPassword {
     }	
     */
     public static SfGuardForgotPassword getById(Long id) {
-            ArrayList<SfGuardForgotPassword> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(SfGuardForgotPassword item:map)return item;
             return null;
     }
@@ -227,7 +229,7 @@ public class SfGuardForgotPassword {
             return null;
     }
 
-    public static ArrayList<SfGuardForgotPassword> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -237,7 +239,7 @@ public class SfGuardForgotPassword {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<SfGuardForgotPassword> items=new ArrayList<SfGuardForgotPassword>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new SfGuardForgotPassword(rs));
                     //items.put(rs.getLong("id"), new SfGuardForgotPassword(rs));
@@ -314,6 +316,16 @@ public class SfGuardForgotPassword {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<SfGuardForgotPassword>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -323,7 +335,7 @@ public class SfGuardForgotPassword {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<SfGuardForgotPassword> items=SfGuardForgotPassword.select("");
+        RecordList items=SfGuardForgotPassword.select("");
         for(SfGuardForgotPassword item:items)
         {
             System.out.println(item);

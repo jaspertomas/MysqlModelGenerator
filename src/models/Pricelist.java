@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class Pricelist {
     //------------FIELDS-----------
@@ -130,7 +132,7 @@ public class Pricelist {
     }	
     */
     public static Pricelist getById(Integer id) {
-            ArrayList<Pricelist> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(Pricelist item:map)return item;
             return null;
     }
@@ -201,7 +203,7 @@ public class Pricelist {
             return null;
     }
 
-    public static ArrayList<Pricelist> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -211,7 +213,7 @@ public class Pricelist {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<Pricelist> items=new ArrayList<Pricelist>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new Pricelist(rs));
                     //items.put(rs.getInt("id"), new Pricelist(rs));
@@ -288,6 +290,16 @@ public class Pricelist {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<Pricelist>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -297,7 +309,7 @@ public class Pricelist {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<Pricelist> items=Pricelist.select("");
+        RecordList items=Pricelist.select("");
         for(Pricelist item:items)
         {
             System.out.println(item);

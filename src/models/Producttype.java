@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class Producttype {
     //------------FIELDS-----------
@@ -325,7 +327,7 @@ public class Producttype {
     }	
     */
     public static Producttype getById(Integer id) {
-            ArrayList<Producttype> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(Producttype item:map)return item;
             return null;
     }
@@ -396,7 +398,7 @@ public class Producttype {
             return null;
     }
 
-    public static ArrayList<Producttype> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -406,7 +408,7 @@ public class Producttype {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<Producttype> items=new ArrayList<Producttype>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new Producttype(rs));
                     //items.put(rs.getInt("id"), new Producttype(rs));
@@ -483,6 +485,16 @@ public class Producttype {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<Producttype>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -492,7 +504,7 @@ public class Producttype {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<Producttype> items=Producttype.select("");
+        RecordList items=Producttype.select("");
         for(Producttype item:items)
         {
             System.out.println(item);

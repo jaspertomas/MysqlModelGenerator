@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class SfGuardUserGroup {
     //------------FIELDS-----------
@@ -130,7 +132,7 @@ public class SfGuardUserGroup {
     }	
     */
     public static SfGuardUserGroup getByUserId(Long user_id) {
-            ArrayList<SfGuardUserGroup> map=select(" user_id = '"+user_id.toString()+"'");
+            RecordList map=select(" user_id = '"+user_id.toString()+"'");
             for(SfGuardUserGroup item:map)return item;
             return null;
     }
@@ -201,7 +203,7 @@ public class SfGuardUserGroup {
             return null;
     }
 
-    public static ArrayList<SfGuardUserGroup> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -211,7 +213,7 @@ public class SfGuardUserGroup {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<SfGuardUserGroup> items=new ArrayList<SfGuardUserGroup>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new SfGuardUserGroup(rs));
                     //items.put(rs.getLong("user_id"), new SfGuardUserGroup(rs));
@@ -288,6 +290,16 @@ public class SfGuardUserGroup {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<SfGuardUserGroup>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -297,7 +309,7 @@ public class SfGuardUserGroup {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<SfGuardUserGroup> items=SfGuardUserGroup.select("");
+        RecordList items=SfGuardUserGroup.select("");
         for(SfGuardUserGroup item:items)
         {
             System.out.println(item);

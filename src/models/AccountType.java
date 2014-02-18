@@ -1,5 +1,6 @@
 package models;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.MySqlDBHelper;
+import utils.JsonHelper;
 
 public class AccountType {
     //------------FIELDS-----------
@@ -104,7 +106,7 @@ public class AccountType {
     }	
     */
     public static AccountType getById(Integer id) {
-            ArrayList<AccountType> map=select(" id = '"+id.toString()+"'");
+            RecordList map=select(" id = '"+id.toString()+"'");
             for(AccountType item:map)return item;
             return null;
     }
@@ -175,7 +177,7 @@ public class AccountType {
             return null;
     }
 
-    public static ArrayList<AccountType> select(String conditions)
+    public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
         Connection conn=MySqlDBHelper.getInstance().getConnection();
@@ -185,7 +187,7 @@ public class AccountType {
             st = conn.createStatement();
                 rs = st.executeQuery("SELECT * from "+tablename+" where "+conditions);
 
-            ArrayList<AccountType> items=new ArrayList<AccountType>();
+            RecordList items=new RecordList();
             while (rs.next()) {
                 items.add(new AccountType(rs));
                     //items.put(rs.getInt("id"), new AccountType(rs));
@@ -262,6 +264,16 @@ public class AccountType {
     {
             return "DROP TABLE IF EXISTS "+tablename;
     }
+    public static class RecordList extends ArrayList<AccountType>{
+        public static RecordList fromJsonString(String resultstring) throws IOException
+        {
+            return JsonHelper.mapper.readValue(resultstring, RecordList.class);
+        }
+        public String toEscapedJsonString() throws IOException
+        {
+            return "\""+JsonHelper.mapper.writeValueAsString(this).replace("\"", "\\\"") +"\"";
+        }
+    }
     public static void main(String args[])
     {
         String database="tmcprogram3";
@@ -271,7 +283,7 @@ public class AccountType {
 
         boolean result=MySqlDBHelper.init(url, username, password);            
 
-        ArrayList<AccountType> items=AccountType.select("");
+        RecordList items=AccountType.select("");
         for(AccountType item:items)
         {
             System.out.println(item);
