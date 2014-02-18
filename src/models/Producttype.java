@@ -382,22 +382,30 @@ public class Producttype {
     public static Integer count(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
-            Connection conn=MySqlDBHelper.getInstance().getConnection();
-            Statement st = null;
-            ResultSet rs = null;
-            try { 
-                st = conn.createStatement();
-                rs = st.executeQuery("SELECT count(*) from "+tablename+" where "+conditions);
-                while (rs.next()) {
-                    return rs.getInt(1);
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(Producttype.class.getName()).log(Level.SEVERE, null, ex);
-                ex.printStackTrace();
-            }
-            return null;
-    }
 
+        //if conditions contains a limit clause, remove it. 
+        //It is not applicable to a count query
+        else if(conditions.contains("limit"))
+        {
+            String[] segments=conditions.split("limit");
+            conditions=segments[0];
+        }
+
+        Connection conn=MySqlDBHelper.getInstance().getConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        try { 
+        st = conn.createStatement();
+        rs = st.executeQuery("SELECT count(*) from "+tablename+" where "+conditions);
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Producttype.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+        return null;
+    }
     public static RecordList select(String conditions)
     {
         if(conditions.isEmpty())conditions = "1";
