@@ -346,7 +346,7 @@ public class Quote {
             {
                     if(!output.isEmpty())
                             output+=",";
-                    output+="'"+value+"'";
+                    output+=(value!=null?"'"+value+"'":"null");
             }
             return output;
     }

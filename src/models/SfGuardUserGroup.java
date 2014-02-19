@@ -242,7 +242,7 @@ public class SfGuardUserGroup {
             {
                     if(!output.isEmpty())
                             output+=",";
-                    output+="'"+value+"'";
+                    output+=(value!=null?"'"+value+"'":"null");
             }
             return output;
     }

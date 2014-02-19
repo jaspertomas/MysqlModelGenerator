@@ -216,7 +216,7 @@ public class Warehouse {
             {
                     if(!output.isEmpty())
                             output+=",";
-                    output+="'"+value+"'";
+                    output+=(value!=null?"'"+value+"'":"null");
             }
             return output;
     }

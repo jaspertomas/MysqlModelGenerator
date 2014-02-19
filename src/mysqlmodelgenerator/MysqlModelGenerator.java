@@ -339,7 +339,7 @@ public class MysqlModelGenerator {
 +"\n            {"
 +"\n                    if(!output.isEmpty())"
 +"\n                            output+=\",\";"
-+"\n                    output+=\"'\"+value+\"'\";"
++"\n                    output+=(value!=null?\"'\"+value+\"'\":\"null\");"
 +"\n            }"
 +"\n            return output;"
 +"\n    }"
