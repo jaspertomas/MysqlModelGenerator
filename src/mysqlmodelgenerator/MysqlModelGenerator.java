@@ -131,7 +131,7 @@ public class MysqlModelGenerator {
             field=fields.get(i);
             fieldtype=fieldtypes.get(i);
             implodevaluesstring+=
-"\n            values.add("+field+stringifier(fieldtype)+");";
+"\n            "+(field.contentEquals(idfield)?"if(withId)":"")+"values.add("+stringifiedWithNull(field,fieldtype)+");";
         }
         
         String savestring="";
@@ -194,7 +194,6 @@ public class MysqlModelGenerator {
 +"\n    public ArrayList<String> implodeFieldValuesHelper(boolean withId)"
 +"\n    {"
 +"\n            ArrayList<String> values=new ArrayList<String>(); "
-+"\n            if(withId)values.add("+idfield +idfieldtypestringifier+");"
 +"\n"
 +"\n            //add values for each field here"
 +implodevaluesstring
@@ -371,7 +370,7 @@ public class MysqlModelGenerator {
 +"\n                    if(!withId && fields[i].contentEquals(\""+idfield+"\"))continue;"
 +"\n                    if(!output.isEmpty())"
 +"\n                            output+=\",\";"
-+"\n                    output+=fields[i]+\"='\"+values.get(i)+\"'\";"
++"\n                    output+=fields[i]+\"=\"+(values.get(i)!=null?\"'\"+values.get(i)+\"'\":\"null\");"
 +"\n            }"
 +"\n            return output;"
 +"\n    }	"
@@ -594,6 +593,40 @@ public class MysqlModelGenerator {
             return "";
         else 
             return "";  
+    }       
+    public static String stringifiedWithNull(String field,String type)
+    {
+        type=type.replaceAll("[,0-9]", "");
+        if(type.contentEquals("int")||type.contentEquals("int()"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contains("varchar()"))
+            return field;
+        else if(type.contentEquals("char()"))
+            return field;
+        else if(type.contentEquals("text"))
+            return field;
+        else if(type.contentEquals("tinytext"))
+            return field;
+        else if(type.contentEquals("date"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contains("bigint"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contentEquals("float")||type.contentEquals("float()"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contentEquals("double")||type.contentEquals("double()"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contentEquals("boolean")||type.contentEquals("boolean()"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contentEquals("datetime")||type.contentEquals("timestamp"))
+            return field+"!=null?"+field+".toString():null";
+        else if(type.contains("enum"))
+            return field;
+        else 
+            return field;  
     }    
      
 }

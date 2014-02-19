@@ -130,16 +130,15 @@ public class Notes {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
             values.add(content);
             values.add(description);
-            values.add(parent_id.toString());
+            values.add(parent_id!=null?parent_id.toString():null);
             values.add(status);
-            values.add(priority.toString());
+            values.add(priority!=null?priority.toString():null);
 
             return values;
     }
@@ -313,7 +312,7 @@ public class Notes {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

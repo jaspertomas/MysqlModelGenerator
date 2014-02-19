@@ -274,14 +274,13 @@ public class Producttype {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
             values.add(description);
-            values.add(parent_id.toString());
-            values.add(priority.toString());
+            values.add(parent_id!=null?parent_id.toString():null);
+            values.add(priority!=null?priority.toString():null);
             values.add(category1);
             values.add(category2);
             values.add(category3);
@@ -469,7 +468,7 @@ public class Producttype {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

@@ -94,13 +94,12 @@ public class Pricelist {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
-            values.add(date.toString());
-            values.add(vendor_id.toString());
+            values.add(date!=null?date.toString():null);
+            values.add(vendor_id!=null?vendor_id.toString():null);
 
             return values;
     }
@@ -274,7 +273,7 @@ public class Pricelist {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

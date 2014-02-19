@@ -82,10 +82,9 @@ public class Users {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(username);
             values.add(password_hash);
 
@@ -261,7 +260,7 @@ public class Users {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

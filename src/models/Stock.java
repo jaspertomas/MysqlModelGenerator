@@ -118,15 +118,14 @@ public class Stock {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(warehouse_id.toString());
-            values.add(product_id.toString());
-            values.add(currentqty.toString());
-            values.add(date.toString());
-            values.add(quota.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(warehouse_id!=null?warehouse_id.toString():null);
+            values.add(product_id!=null?product_id.toString():null);
+            values.add(currentqty!=null?currentqty.toString():null);
+            values.add(date!=null?date.toString():null);
+            values.add(quota!=null?quota.toString():null);
 
             return values;
     }
@@ -300,7 +299,7 @@ public class Stock {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

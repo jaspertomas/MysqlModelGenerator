@@ -250,10 +250,9 @@ public class Customer {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
             values.add(tin_no);
             values.add(address);
@@ -269,7 +268,7 @@ public class Customer {
             values.add(taxitem);
             values.add(notepad);
             values.add(salutation);
-            values.add(is_suki.toString());
+            values.add(is_suki!=null?is_suki.toString():null);
 
             return values;
     }
@@ -443,7 +442,7 @@ public class Customer {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

@@ -202,10 +202,9 @@ public class SfGuardUser {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(first_name);
             values.add(last_name);
             values.add(email_address);
@@ -213,11 +212,11 @@ public class SfGuardUser {
             values.add(algorithm);
             values.add(salt);
             values.add(password);
-            values.add(is_active.toString());
-            values.add(is_super_admin.toString());
-            values.add(last_login.toString());
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
+            values.add(is_active!=null?is_active.toString():null);
+            values.add(is_super_admin!=null?is_super_admin.toString():null);
+            values.add(last_login!=null?last_login.toString():null);
+            values.add(created_at!=null?created_at.toString():null);
+            values.add(updated_at!=null?updated_at.toString():null);
 
             return values;
     }
@@ -391,7 +390,7 @@ public class SfGuardUser {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

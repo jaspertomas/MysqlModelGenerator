@@ -106,13 +106,12 @@ public class AccountCategory {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
             values.add(code);
-            values.add(account_type_id.toString());
+            values.add(account_type_id!=null?account_type_id.toString():null);
             values.add(parent_code);
 
             return values;
@@ -287,7 +286,7 @@ public class AccountCategory {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

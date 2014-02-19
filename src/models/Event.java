@@ -226,24 +226,23 @@ public class Event {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(type);
             values.add(parent_class);
-            values.add(parent_id.toString());
+            values.add(parent_id!=null?parent_id.toString():null);
             values.add(parent_name);
             values.add(child_class);
             values.add(children_id);
-            values.add(date.toString());
-            values.add(amount.toString());
+            values.add(date!=null?date.toString():null);
+            values.add(amount!=null?amount.toString():null);
             values.add(detail1);
             values.add(detail2);
             values.add(detail3);
             values.add(notes);
-            values.add(is_cancelled.toString());
-            values.add(checkcleardate.toString());
+            values.add(is_cancelled!=null?is_cancelled.toString():null);
+            values.add(checkcleardate!=null?checkcleardate.toString():null);
 
             return values;
     }
@@ -417,7 +416,7 @@ public class Event {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

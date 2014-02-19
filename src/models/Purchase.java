@@ -370,36 +370,35 @@ public class Purchase {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(pono);
             values.add(invno);
-            values.add(total.toString());
+            values.add(total!=null?total.toString():null);
             values.add(memo);
-            values.add(tax.toString());
-            values.add(vendor_id.toString());
+            values.add(tax!=null?tax.toString():null);
+            values.add(vendor_id!=null?vendor_id.toString():null);
             values.add(vendor_name);
-            values.add(terms_id.toString());
-            values.add(employee_id.toString());
-            values.add(template_id.toString());
-            values.add(date.toString());
-            values.add(datereceived.toString());
-            values.add(duedate.toString());
+            values.add(terms_id!=null?terms_id.toString():null);
+            values.add(employee_id!=null?employee_id.toString():null);
+            values.add(template_id!=null?template_id.toString():null);
+            values.add(date!=null?date.toString():null);
+            values.add(datereceived!=null?datereceived.toString():null);
+            values.add(duedate!=null?duedate.toString():null);
             values.add(vendor_invoice);
             values.add(discrate);
-            values.add(discamt.toString());
+            values.add(discamt!=null?discamt.toString():null);
             values.add(status);
             values.add(type);
-            values.add(cash.toString());
-            values.add(cheque.toString());
-            values.add(credit.toString());
+            values.add(cash!=null?cash.toString():null);
+            values.add(cheque!=null?cheque.toString():null);
+            values.add(credit!=null?credit.toString():null);
             values.add(chequeno);
-            values.add(chequedate.toString());
-            values.add(balance.toString());
+            values.add(chequedate!=null?chequedate.toString():null);
+            values.add(balance!=null?balance.toString():null);
             values.add(chequedata);
-            values.add(is_inspected.toString());
+            values.add(is_inspected!=null?is_inspected.toString():null);
 
             return values;
     }
@@ -573,7 +572,7 @@ public class Purchase {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

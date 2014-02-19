@@ -94,13 +94,12 @@ public class SfGuardGroupPermission {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(group_id.toString());
 
             //add values for each field here
-            values.add(group_id.toString());
-            values.add(permission_id.toString());
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
+            if(withId)values.add(group_id!=null?group_id.toString():null);
+            values.add(permission_id!=null?permission_id.toString():null);
+            values.add(created_at!=null?created_at.toString():null);
+            values.add(updated_at!=null?updated_at.toString():null);
 
             return values;
     }
@@ -274,7 +273,7 @@ public class SfGuardGroupPermission {
                     if(!withId && fields[i].contentEquals("group_id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

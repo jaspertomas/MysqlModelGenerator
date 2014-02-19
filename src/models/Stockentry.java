@@ -178,18 +178,17 @@ public class Stockentry {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(date.toString());
-            values.add(qty.toString());
-            values.add(balance.toString());
-            values.add(stock_id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(date!=null?date.toString():null);
+            values.add(qty!=null?qty.toString():null);
+            values.add(balance!=null?balance.toString():null);
+            values.add(stock_id!=null?stock_id.toString():null);
             values.add(ref_class);
-            values.add(ref_id.toString());
-            values.add(is_cancelled.toString());
-            values.add(priority.toString());
+            values.add(ref_id!=null?ref_id.toString():null);
+            values.add(is_cancelled!=null?is_cancelled.toString():null);
+            values.add(priority!=null?priority.toString():null);
             values.add(type);
             values.add(description);
 
@@ -365,7 +364,7 @@ public class Stockentry {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

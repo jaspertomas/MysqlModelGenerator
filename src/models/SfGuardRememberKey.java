@@ -118,15 +118,14 @@ public class SfGuardRememberKey {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(user_id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(user_id!=null?user_id.toString():null);
             values.add(remember_key);
             values.add(ip_address);
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
+            values.add(created_at!=null?created_at.toString():null);
+            values.add(updated_at!=null?updated_at.toString():null);
 
             return values;
     }
@@ -300,7 +299,7 @@ public class SfGuardRememberKey {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

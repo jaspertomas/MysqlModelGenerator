@@ -142,17 +142,16 @@ public class Account {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(code);
             values.add(name);
-            values.add(account_type_id.toString());
-            values.add(account_category_id.toString());
-            values.add(is_special.toString());
-            values.add(currentqty.toString());
-            values.add(date.toString());
+            values.add(account_type_id!=null?account_type_id.toString():null);
+            values.add(account_category_id!=null?account_category_id.toString():null);
+            values.add(is_special!=null?is_special.toString():null);
+            values.add(currentqty!=null?currentqty.toString():null);
+            values.add(date!=null?date.toString():null);
 
             return values;
     }
@@ -326,7 +325,7 @@ public class Account {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

@@ -214,23 +214,22 @@ public class Purchasedetail {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(purchase_id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(purchase_id!=null?purchase_id.toString():null);
             values.add(description);
-            values.add(qty.toString());
-            values.add(price.toString());
-            values.add(sellprice.toString());
-            values.add(total.toString());
-            values.add(tax.toString());
-            values.add(product_id.toString());
+            values.add(qty!=null?qty.toString():null);
+            values.add(price!=null?price.toString():null);
+            values.add(sellprice!=null?sellprice.toString():null);
+            values.add(total!=null?total.toString():null);
+            values.add(tax!=null?tax.toString():null);
+            values.add(product_id!=null?product_id.toString():null);
             values.add(barcode);
             values.add(discrate);
-            values.add(discamt.toString());
-            values.add(unittotal.toString());
-            values.add(is_cancelled.toString());
+            values.add(discamt!=null?discamt.toString():null);
+            values.add(unittotal!=null?unittotal.toString():null);
+            values.add(is_cancelled!=null?is_cancelled.toString():null);
 
             return values;
     }
@@ -404,7 +403,7 @@ public class Purchasedetail {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

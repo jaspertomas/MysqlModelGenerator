@@ -382,18 +382,17 @@ public class Product {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
-            values.add(brand_id.toString());
-            values.add(producttype_id.toString());
-            values.add(qty.toString());
-            values.add(minbuyprice.toString());
-            values.add(maxbuyprice.toString());
-            values.add(minsellprice.toString());
-            values.add(maxsellprice.toString());
+            values.add(brand_id!=null?brand_id.toString():null);
+            values.add(producttype_id!=null?producttype_id.toString():null);
+            values.add(qty!=null?qty.toString():null);
+            values.add(minbuyprice!=null?minbuyprice.toString():null);
+            values.add(maxbuyprice!=null?maxbuyprice.toString():null);
+            values.add(minsellprice!=null?minsellprice.toString():null);
+            values.add(maxsellprice!=null?maxsellprice.toString():null);
             values.add(description);
             values.add(category1);
             values.add(category2);
@@ -405,14 +404,14 @@ public class Product {
             values.add(category8);
             values.add(category9);
             values.add(category10);
-            values.add(publish.toString());
-            values.add(autocalcsellprice.toString());
-            values.add(autocalcbuyprice.toString());
-            values.add(monitored.toString());
+            values.add(publish!=null?publish.toString():null);
+            values.add(autocalcsellprice!=null?autocalcsellprice.toString():null);
+            values.add(autocalcbuyprice!=null?autocalcbuyprice.toString():null);
+            values.add(monitored!=null?monitored.toString():null);
             values.add(barcode);
-            values.add(is_service.toString());
-            values.add(created_at.toString());
-            values.add(updated_at.toString());
+            values.add(is_service!=null?is_service.toString():null);
+            values.add(created_at!=null?created_at.toString():null);
+            values.add(updated_at!=null?updated_at.toString():null);
 
             return values;
     }
@@ -586,7 +585,7 @@ public class Product {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

@@ -190,21 +190,20 @@ public class Quote {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(date.toString());
-            values.add(vendor_id.toString());
-            values.add(product_id.toString());
-            values.add(price.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(date!=null?date.toString():null);
+            values.add(vendor_id!=null?vendor_id.toString():null);
+            values.add(product_id!=null?product_id.toString():null);
+            values.add(price!=null?price.toString():null);
             values.add(discrate);
-            values.add(discamt.toString());
+            values.add(discamt!=null?discamt.toString():null);
             values.add(ref_class);
-            values.add(ref_id.toString());
-            values.add(total.toString());
-            values.add(mine.toString());
-            values.add(is_cancelled.toString());
+            values.add(ref_id!=null?ref_id.toString():null);
+            values.add(total!=null?total.toString():null);
+            values.add(mine!=null?mine.toString():null);
+            values.add(is_cancelled!=null?is_cancelled.toString():null);
 
             return values;
     }
@@ -378,7 +377,7 @@ public class Quote {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

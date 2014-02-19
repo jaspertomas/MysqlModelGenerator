@@ -418,40 +418,39 @@ public class Invoice {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
-            values.add(customer_id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
+            values.add(customer_id!=null?customer_id.toString():null);
             values.add(customer_name);
             values.add(invno);
             values.add(ponumber);
             values.add(notes);
-            values.add(payonly.toString());
-            values.add(total.toString());
+            values.add(payonly!=null?payonly.toString():null);
+            values.add(total!=null?total.toString():null);
             values.add(cheque);
-            values.add(chequedate.toString());
-            values.add(date.toString());
-            values.add(duedate.toString());
-            values.add(datepaid.toString());
-            values.add(terms_id.toString());
-            values.add(salesman_id.toString());
-            values.add(technician_id.toString());
-            values.add(template_id.toString());
-            values.add(cash.toString());
-            values.add(chequeamt.toString());
-            values.add(credit.toString());
+            values.add(chequedate!=null?chequedate.toString():null);
+            values.add(date!=null?date.toString():null);
+            values.add(duedate!=null?duedate.toString():null);
+            values.add(datepaid!=null?datepaid.toString():null);
+            values.add(terms_id!=null?terms_id.toString():null);
+            values.add(salesman_id!=null?salesman_id.toString():null);
+            values.add(technician_id!=null?technician_id.toString():null);
+            values.add(template_id!=null?template_id.toString():null);
+            values.add(cash!=null?cash.toString():null);
+            values.add(chequeamt!=null?chequeamt.toString():null);
+            values.add(credit!=null?credit.toString():null);
             values.add(discrate);
-            values.add(discamt.toString());
+            values.add(discamt!=null?discamt.toString():null);
             values.add(saletype);
             values.add(status);
-            values.add(dsrdeduction.toString());
-            values.add(balance.toString());
+            values.add(dsrdeduction!=null?dsrdeduction.toString():null);
+            values.add(balance!=null?balance.toString():null);
             values.add(chequedata);
-            values.add(checkcleardate.toString());
-            values.add(checkcollectevents.toString());
-            values.add(hidden.toString());
-            values.add(is_inspected.toString());
+            values.add(checkcleardate!=null?checkcleardate.toString():null);
+            values.add(checkcollectevents!=null?checkcollectevents.toString():null);
+            values.add(hidden!=null?hidden.toString():null);
+            values.add(is_inspected!=null?is_inspected.toString():null);
 
             return values;
     }
@@ -625,7 +624,7 @@ public class Invoice {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	

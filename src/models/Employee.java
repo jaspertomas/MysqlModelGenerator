@@ -94,13 +94,12 @@ public class Employee {
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
     {
             ArrayList<String> values=new ArrayList<String>(); 
-            if(withId)values.add(id.toString());
 
             //add values for each field here
-            values.add(id.toString());
+            if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
-            values.add(commission.toString());
-            values.add(is_technician.toString());
+            values.add(commission!=null?commission.toString():null);
+            values.add(is_technician!=null?is_technician.toString():null);
 
             return values;
     }
@@ -274,7 +273,7 @@ public class Employee {
                     if(!withId && fields[i].contentEquals("id"))continue;
                     if(!output.isEmpty())
                             output+=",";
-                    output+=fields[i]+"='"+values.get(i)+"'";
+                    output+=fields[i]+"="+(values.get(i)!=null?"'"+values.get(i)+"'":"null");
             }
             return output;
     }	
