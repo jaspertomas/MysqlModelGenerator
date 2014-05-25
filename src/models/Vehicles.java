@@ -229,14 +229,14 @@ public class Vehicles {
     {
         try {
             createTable();
-            Item i=new Item();
+            Vehicle i=new Vehicle();
             i.save();
             
-//            Items.delete(1);
-            for(Item j:Items.select(""))
-                System.out.println(j.getId()+j.getName());
+//            Vehicles.delete(1);
+            for(Vehicle j:Vehicles.select(""))
+                System.out.println(j.getId());
             
-            System.out.println(Items.count(""));
+            System.out.println(Vehicles.count(""));
             
         } catch (Exception e) {
             e.printStackTrace();

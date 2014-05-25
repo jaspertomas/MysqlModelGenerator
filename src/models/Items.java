@@ -234,7 +234,7 @@ public class Items {
             
 //            Items.delete(1);
             for(Item j:Items.select(""))
-                System.out.println(j.getId()+j.getName());
+                System.out.println(j.getId());
             
             System.out.println(Items.count(""));
             

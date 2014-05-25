@@ -229,14 +229,14 @@ public class Purchases {
     {
         try {
             createTable();
-            Item i=new Item();
+            Purchase i=new Purchase();
             i.save();
             
-//            Items.delete(1);
-            for(Item j:Items.select(""))
-                System.out.println(j.getId()+j.getName());
+//            Purchases.delete(1);
+            for(Purchase j:Purchases.select(""))
+                System.out.println(j.getId());
             
-            System.out.println(Items.count(""));
+            System.out.println(Purchases.count(""));
             
         } catch (Exception e) {
             e.printStackTrace();
