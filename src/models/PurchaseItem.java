@@ -14,36 +14,36 @@ import java.util.logging.Logger;
 import utils.SqliteDbHelper;
 import utils.JsonHelper;
 
-public class Purchase {
+public class PurchaseItem {
     //------------FIELDS-----------
-    public static final String tablename="purchase";
+    public static final String tablename="purchase_item";
     //field names
     public static String[] fields={
             "id"
-            ,"date"
             ,"vehicle_id"
+            ,"item_id"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"date"
+            ,"int(11)"
             ,"int(11)"
             };
     //-----------------------
 
     public Integer id;
-    public Date date;
     public Integer vehicle_id;
+    public Integer item_id;
 
-    public Purchase() {
+    public PurchaseItem() {
     }
-    public Purchase(ResultSet rs) {
+    public PurchaseItem(ResultSet rs) {
         try {
             id=rs.getInt("id");
-            date=rs.getDate("date");
             vehicle_id=rs.getInt("vehicle_id");
+            item_id=rs.getInt("item_id");
         } catch (SQLException ex) {
-            Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PurchaseItem.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -61,20 +61,20 @@ public class Purchase {
             this.id = id;
     }
 
-    public Date getDate() {
-            return date;
-    }
-
-    public void setDate(Date date) {
-            this.date = date;
-    }
-
     public Integer getVehicleId() {
             return vehicle_id;
     }
 
     public void setVehicleId(Integer vehicle_id) {
             this.vehicle_id = vehicle_id;
+    }
+
+    public Integer getItemId() {
+            return item_id;
+    }
+
+    public void setItemId(Integer item_id) {
+            this.item_id = item_id;
     }
 
 
@@ -85,21 +85,21 @@ public class Purchase {
 
             //add values for each field here
             if(withId)values.add(id!=null?id.toString():null);
-            values.add(date!=null?date.toString():null);
             values.add(vehicle_id!=null?vehicle_id.toString():null);
+            values.add(item_id!=null?item_id.toString():null);
 
             return values;
     }
     public void delete()
     {
-            Purchases.delete(this);
+            PurchaseItems.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Purchases.insert(this);
+                    PurchaseItems.insert(this);
             else
-                    Purchases.update(this);
+                    PurchaseItems.update(this);
     }
     @Override
     public String toString()

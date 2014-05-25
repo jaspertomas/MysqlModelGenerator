@@ -14,36 +14,40 @@ import java.util.logging.Logger;
 import utils.SqliteDbHelper;
 import utils.JsonHelper;
 
-public class Purchase {
+public class Vehicle {
     //------------FIELDS-----------
-    public static final String tablename="purchase";
+    public static final String tablename="vehicle";
     //field names
     public static String[] fields={
             "id"
-            ,"date"
-            ,"vehicle_id"
+            ,"name"
+            ,"plate"
+            ,"registration"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"date"
-            ,"int(11)"
+            ,"varchar(100)"
+            ,"varchar(10)"
+            ,"varchar(30)"
             };
     //-----------------------
 
     public Integer id;
-    public Date date;
-    public Integer vehicle_id;
+    public String name;
+    public String plate;
+    public String registration;
 
-    public Purchase() {
+    public Vehicle() {
     }
-    public Purchase(ResultSet rs) {
+    public Vehicle(ResultSet rs) {
         try {
             id=rs.getInt("id");
-            date=rs.getDate("date");
-            vehicle_id=rs.getInt("vehicle_id");
+            name=rs.getString("name");
+            plate=rs.getString("plate");
+            registration=rs.getString("registration");
         } catch (SQLException ex) {
-            Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vehicle.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -61,20 +65,28 @@ public class Purchase {
             this.id = id;
     }
 
-    public Date getDate() {
-            return date;
+    public String getName() {
+            return name;
     }
 
-    public void setDate(Date date) {
-            this.date = date;
+    public void setName(String name) {
+            this.name = name;
     }
 
-    public Integer getVehicleId() {
-            return vehicle_id;
+    public String getPlate() {
+            return plate;
     }
 
-    public void setVehicleId(Integer vehicle_id) {
-            this.vehicle_id = vehicle_id;
+    public void setPlate(String plate) {
+            this.plate = plate;
+    }
+
+    public String getRegistration() {
+            return registration;
+    }
+
+    public void setRegistration(String registration) {
+            this.registration = registration;
     }
 
 
@@ -85,21 +97,22 @@ public class Purchase {
 
             //add values for each field here
             if(withId)values.add(id!=null?id.toString():null);
-            values.add(date!=null?date.toString():null);
-            values.add(vehicle_id!=null?vehicle_id.toString():null);
+            values.add(name);
+            values.add(plate);
+            values.add(registration);
 
             return values;
     }
     public void delete()
     {
-            Purchases.delete(this);
+            Vehicles.delete(this);
     }
     public void save()
     {
             if(id==null || id==0)
-                    Purchases.insert(this);
+                    Vehicles.insert(this);
             else
-                    Purchases.update(this);
+                    Vehicles.update(this);
     }
     @Override
     public String toString()

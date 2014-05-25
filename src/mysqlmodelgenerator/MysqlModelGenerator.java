@@ -10,8 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import utils.MySqlDBHelper;
+import utils.SqliteDbHelper;
 import utils.fileaccess.FileWriter;
 
 /**
@@ -20,7 +20,7 @@ import utils.fileaccess.FileWriter;
  */
 public class MysqlModelGenerator {
     
-    static String database="tmcprogram3";
+    static String database="cecil";
     static String hostname="localhost";
     static String username="root";
     static String password="password";
@@ -53,6 +53,7 @@ public class MysqlModelGenerator {
                     fieldtypes.add(rs.getString(2));
                 }
                 createModelFile(table,fields,fieldtypes);
+                createModelsFile(table,fields,fieldtypes);
             }
         } catch (SQLException ex) {
             //Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,16 +61,15 @@ public class MysqlModelGenerator {
         }
     }
 
-    public static void createModelFile(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
+    public static void createModelsFile(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
     {
         //write file to current directory
         File outputdir=new File("./src/models");
         outputdir.mkdir();
-        FileWriter.write(outputdir.getPath()+"/"+toCamelCase(table)+".java", createModelFileContents(table,fields,fieldtypes));
+        FileWriter.write(outputdir.getPath()+"/"+toCamelCase(table)+"s.java", createModelsFileContents(table,fields,fieldtypes));
     }
-    public static String createModelFileContents(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
+    public static String createModelsFileContents(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
     {
-        String tablecaps=toCamelCase(table);
         int counter=0;
         
         String fieldsstring="";
@@ -154,7 +154,345 @@ public class MysqlModelGenerator {
 +"\nimport java.util.ArrayList;"
 +"\nimport java.util.logging.Level;"
 +"\nimport java.util.logging.Logger;"
-+"\nimport utils.MySqlDBHelper;"
++"\nimport utils.SqliteDbHelper;"
++"\nimport utils.JsonHelper;"
++"\n"
++"\npublic class [tableCapsPlural] {"
++"\n    //------------FIELDS-----------"
++"\n    public static final String tablename=[tableCaps].tablename;"
++"\n    public static String[] fields=[tableCaps].fields;"
++"\n    public static String[] fieldtypes=[tableCaps].fieldtypes;"
++"\n    //-----------------------"
++"\n    //-------------------------TABLE FUNCTIONS---------------------"
++"\n"
++"\n    //-----------getter functions----------"
++"\n    /*"
++"\n    public static [tableCapsPlural] getByName(String name)"
++"\n    {"
++"\n            HashMap<"+iddatatype+",[tableCapsPlural]> map=select(\" name = '\"+name+\"'\");"
++"\n            for([tableCapsPlural] item:map)return item;"
++"\n            return null;"
++"\n    }	"
++"\n    */"
++"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+iddatatype+" "+idfield+") {"
++"\n            RecordList map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
++"\n            for([tableCaps] item:map)return item;"
++"\n            return null;"
++"\n    }"
++"\n    //-----------database functions--------------"
++"\n"
++"\n    public static void delete("+iddatatype+" "+idfield+")"
++"\n    {"
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();            "
++"\n        Statement st = null;"
++"\n        try { "
++"\n            st = conn.createStatement();"
++"\n            st.executeUpdate(\"delete from \"+tablename+\" where "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"';\");"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n    }"
++"\n    public static void delete([tableCaps] item)"
++"\n    {"
++"\n        delete(item.get"+toCamelCase(idfield)+"());"
++"\n    }"
++"\n    public static void insert([tableCaps] item)"
++"\n    {"
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();            "
++"\n        Statement st = null;"
++"\n        boolean withid=false;"
++"\n        try { "
++"\n            st = conn.createStatement();"
++"\n            //for tables with integer primary key"
++"\n            if(fieldtypes[0].contentEquals(\"integer\"))withid=false;                "
++"\n            //for tables with varchar primary key"
++"\n            else if(fieldtypes[0].contains(\"varchar\"))withid=true;                "
++"\n            st.executeUpdate(\"INSERT INTO \"+tablename+\" (\"+implodeFields(withid)+\")VALUES (\"+implodeValues(item, withid)+\");\");"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n    }"
++"\n    public static void update([tableCaps] item)"
++"\n    {"
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();            "
++"\n        Statement st = null;"
++"\n        boolean withid=false;"
++"\n        try { "
++"\n            st = conn.createStatement();"
++"\n            st.executeUpdate(\"update \"+tablename+\" set \"+implodeFieldsWithValues(item,false)+\" where "+idfield+" = '\"+item.get"+toCamelCase(idfield)+"()"+idfieldtypestringifier+"+\"';\");"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n    }"
++"\n    public static Integer count(String conditions)"
++"\n    {"
++"\n        if(conditions.isEmpty())conditions = \"1\";"
++"\n"
++"\n        //if conditions contains a limit clause, remove it. "
++"\n        //It is not applicable to a count query"
++"\n        else if(conditions.contains(\"limit\"))"
++"\n        {"
++"\n            String[] segments=conditions.split(\"limit\");"
++"\n            conditions=segments[0];"
++"\n        }"
++"\n"
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();"
++"\n        Statement st = null;"
++"\n        ResultSet rs = null;"
++"\n        try { "
++"\n        st = conn.createStatement();"
++"\n        rs = st.executeQuery(\"SELECT count(*) from \"+tablename+\" where \"+conditions);"
++"\n            while (rs.next()) {"
++"\n                return rs.getInt(1);"
++"\n            }"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n        return null;"
++"\n    }"
++"\n    public static RecordList select(String conditions)"
++"\n    {"
++"\n        if(conditions.isEmpty())conditions = \"1\";"
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();"
++"\n        Statement st = null;"
++"\n        ResultSet rs = null;"
++"\n        try { "
++"\n            st = conn.createStatement();"
++"\n                rs = st.executeQuery(\"SELECT * from \"+tablename+\" where \"+conditions);"
++"\n"
++"\n            RecordList items=new RecordList();"
++"\n            while (rs.next()) {"
++"\n                items.add(new [tableCaps](rs));"
++"\n                    //items.put(rs."+rsGetterFor(idfieldtype)+"(\""+idfield+"\"), new [tableCapsPlural](rs));"
++"\n            }"
++"\n            return items;"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n            return null;"
++"\n        }"
++"\n    }"
++"\n"
++"\n    //-----------database helper functions--------------"
++"\n    public static String implodeValues([tableCaps] item,boolean withId)"
++"\n    {"
++"\n            ArrayList<String> values=item.implodeFieldValuesHelper(withId);"
++"\n            String output=\"\";"
++"\n            for(String value:values)"
++"\n            {"
++"\n                    if(!output.isEmpty())"
++"\n                            output+=\",\";"
++"\n                    output+=(value!=null?\"'\"+value+\"'\":\"null\");"
++"\n            }"
++"\n            return output;"
++"\n    }"
++"\n    public static String implodeFields(boolean withId)"
++"\n    {"
++"\n            String output=\"\";"
++"\n            for(String field:fields)"
++"\n            {"
++"\n                    if(!withId && field.contentEquals(\""+idfield+"\"))continue;"
++"\n                    if(!output.isEmpty())"
++"\n                            output+=\",\";"
++"\n                    output+=field;"
++"\n            }"
++"\n            return output;"
++"\n    }"
++"\n    public static String implodeFieldsWithValues([tableCaps] item,boolean withId)"
++"\n    {"
++"\n            ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later."
++"\n"
++"\n            if(values.size()!=fields.length)"
++"\n            {"
++"\n                    System.err.println(\"[tableCapsPlural]:implodeFieldsWithValues(): ERROR: values length does not match fields length\");"
++"\n            }"
++"\n"
++"\n            String output=\"\";"
++"\n            for(int i=0;i<fields.length;i++)"
++"\n            {"
++"\n                    if(!withId && fields[i].contentEquals(\""+idfield+"\"))continue;"
++"\n                    if(!output.isEmpty())"
++"\n                            output+=\",\";"
++"\n                    output+=fields[i]+\"=\"+(values.get(i)!=null?\"'\"+values.get(i)+\"'\":\"null\");"
++"\n            }"
++"\n            return output;"
++"\n    }	"
++"\n    public static String implodeFieldsWithTypes()"
++"\n    {"
++"\n            String output=\"\";"
++"\n            for(int i=0;i<fields.length;i++)"
++"\n            {"
++"\n                    if(fields[i].contentEquals(fields[0]))//fields[0] being the primary key"
++"\n                    {"
++"\n                        if(fieldtypes[i].toLowerCase().contains(\"int\"))"
++"\n                            output+=fields[i]+\" INTEGER PRIMARY KEY\";"
++"\n                        else"
++"\n                            output+=fields[i]+\" \"+fieldtypes[i]+\" PRIMARY KEY\";"
++"\n                    }"
++"\n                    else"
++"\n                            output+=\",\"+fields[i]+\" \"+fieldtypes[i];"
++"\n            }"
++"\n            return output;"
++"\n    }	"
++"\n    public static void createTable()"
++"\n    {"
++"\n        String query = \"CREATE TABLE IF NOT EXISTS \"+tablename+\" (\"+implodeFieldsWithTypes()+\" );\";"
++"\n        try { "
++"\n            SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n    }"
++"\n    public static void deleteTable()"
++"\n    {"
++"\n        String query = \"DROP TABLE IF EXISTS \"+tablename;"
++"\n        try { "
++"\n            SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);"
++"\n        } catch (SQLException ex) {"
++"\n            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);"
++"\n            ex.printStackTrace();"
++"\n        }"
++"\n    }"
++"\n    public static class RecordList extends ArrayList<[tableCaps]>{"
++"\n        public static RecordList fromJsonString(String resultstring) throws IOException"
++"\n        {"
++"\n            return JsonHelper.mapper.readValue(resultstring, RecordList.class);"
++"\n        }"
++"\n        public String toEscapedJsonString() throws IOException"
++"\n        {"
++"\n            return \"\\\"\"+JsonHelper.mapper.writeValueAsString(this).replace(\"\\\"\", \"\\\\\\\"\") +\"\\\"\";"
++"\n        }"
++"\n    }"
++"\n    public static void main(String args[])"
++"\n    {"
++"\n        try {"
++"\n            createTable();"
+//+"\n////            //System.out.println("Table created successfully");"
++"\n            Item i=new Item();"
+//+"\n            i.setName(\"baa\");"
++"\n            i.save();"
++"\n            "
++"\n//            Items.delete(1);"
++"\n            for(Item j:Items.select(\"\"))"
++"\n                System.out.println(j.getId()+j.getName());"
++"\n            "
++"\n            System.out.println(Items.count(\"\"));"
++"\n            "
++"\n        } catch (Exception e) {"
++"\n            e.printStackTrace();"
++"\n        }"
++"\n    } "
++"\n}"
++"\n";
+        String tablecaps=toCamelCase(table);
+        String tablecapsplural=toCamelCase(table+"s");
+        String tableplural=table+"s";
+        output=output.replace("[tableCaps]", tablecaps);
+        output=output.replace("[table]", table);
+        output=output.replace("[tableCapsPlural]", tablecapsplural);
+        output=output.replace("[tablePlural]", tableplural);
+
+        return output;
+    }
+    public static void createModelFile(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
+    {
+        //write file to current directory
+        File outputdir=new File("./src/models");
+        outputdir.mkdir();
+        FileWriter.write(outputdir.getPath()+"/"+toCamelCase(table)+".java", createModelFileContents(table,fields,fieldtypes));
+    }
+    public static String createModelFileContents(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
+    {
+        int counter=0;
+        
+        String fieldsstring="";
+        for(int i=0;i<fields.size();i++)
+        {
+            fieldsstring+="\n            "+(i==0?"":",")+"\""+fields.get(i) +"\"";
+        }
+        
+        String fieldtypesstring="";
+        for(int i=0;i<fieldtypes.size();i++)
+        {
+            fieldtypesstring+="\n            "+(i==0?"":",")+"\""+fieldtypes.get(i) +"\"";
+        }
+        
+        String idfield=fields.get(0);
+        String idfieldtype=fieldtypes.get(0);
+        String idfieldtypestringifier=stringifier(fieldtypes.get(0));
+        String iddatatype=datatypeFor(fieldtypes.get(0));
+        
+        String gettersandsetters="";
+        String datatype="";
+        String field="";
+        String fieldtype="";
+        for(int i=0;i<fields.size();i++)
+        {
+            field=fields.get(i);
+            datatype=datatypeFor(fieldtypes.get(i));
+            gettersandsetters+=
+"\n    public "+datatype+" get"+toCamelCase(field)+"() {"
++"\n            return "+field+";"
++"\n    }"
++"\n"
++"\n    public void set"+toCamelCase(field)+"("+datatype+" "+field+") {"
++"\n            this."+field+" = "+field+";"
++"\n    }"
++"\n";
+        }
+        
+        String vardefinitions="";
+        for(int i=0;i<fields.size();i++)
+        {
+            field=fields.get(i);
+            datatype=datatypeFor(fieldtypes.get(i));
+            vardefinitions+=
+"\n    public "+datatype+" "+field+";";
+        }
+                        
+        String constructorfields="";
+        for(int i=0;i<fields.size();i++)
+        {
+            field=fields.get(i);
+            constructorfields+=
+"\n            "+field+"=rs."+rsGetterFor(fieldtypes.get(i))+"(\""+field+"\");";
+        }
+ 
+        String implodevaluesstring="";
+        for(int i=0;i<fields.size();i++)
+        {
+            field=fields.get(i);
+            fieldtype=fieldtypes.get(i);
+            implodevaluesstring+=
+"\n            "+(field.contentEquals(idfield)?"if(withId)":"")+"values.add("+stringifiedWithNull(field,fieldtype)+");";
+        }
+        
+        String savestring="";
+        if(iddatatype.contentEquals("String"))
+            savestring="\n            if("+idfield+"==null || "+idfield+".isEmpty() )";
+        else
+            savestring="\n            if("+idfield+"==null || "+idfield+"==0)";
+        
+        
+        String output="package models;"
++"\n"
++"\nimport java.io.IOException;"
++"\nimport java.math.BigDecimal;"
++"\nimport java.sql.Connection;"
++"\nimport java.sql.ResultSet;"
++"\nimport java.sql.SQLException;"
++"\nimport java.sql.Statement;"
++"\nimport java.sql.Date;"
++"\nimport java.sql.Timestamp;"
++"\nimport java.util.ArrayList;"
++"\nimport java.util.logging.Level;"
++"\nimport java.util.logging.Logger;"
++"\nimport utils.SqliteDbHelper;"
 +"\nimport utils.JsonHelper;"
 +"\n"
 +"\npublic class [tableCaps] {"
@@ -202,228 +540,29 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n    public void delete()"
 +"\n    {"
-+"\n            [tableCaps].delete(this);"
++"\n            [tableCapsPlural].delete(this);"
 +"\n    }"
 +"\n    public void save()"
 +"\n    {"
 +savestring
-+"\n                    [tableCaps].insert(this);"
++"\n                    [tableCapsPlural].insert(this);"
 +"\n            else"
-+"\n                    [tableCaps].update(this);"
++"\n                    [tableCapsPlural].update(this);"
 +"\n    }"
++"\n    @Override"
 +"\n    public String toString()"
 +"\n    {"
 +"\n            return "+idfield+idfieldtypestringifier+";"
 +"\n    }"
-+"\n"
-+"\n    //-------------------------TABLE FUNCTIONS---------------------"
-+"\n"
-+"\n    //-----------getter functions----------"
-+"\n    /*"
-+"\n    public static [tableCaps] getByName(String name)"
-+"\n    {"
-+"\n            HashMap<"+iddatatype+",[tableCaps]> map=select(\" name = '\"+name+\"'\");"
-+"\n            for([tableCaps] item:map)return item;"
-+"\n            return null;"
-+"\n    }	"
-+"\n    */"
-+"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+iddatatype+" "+idfield+") {"
-+"\n            RecordList map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
-+"\n            for([tableCaps] item:map)return item;"
-+"\n            return null;"
-+"\n    }"
-+"\n    //-----------database functions--------------"
-+"\n"
-+"\n    public static void delete("+iddatatype+" "+idfield+")"
-+"\n    {"
-+"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();            "
-+"\n        Statement st = null;"
-+"\n        try { "
-+"\n            st = conn.createStatement();"
-+"\n            st.executeUpdate(\"delete from \"+tablename+\" where "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"';\");"
-+"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
-+"\n            ex.printStackTrace();"
-+"\n        }"
-+"\n    }"
-+"\n    public static void delete([tableCaps] item)"
-+"\n    {"
-+"\n        delete(item.get"+toCamelCase(idfield)+"());"
-+"\n    }"
-+"\n    public static void insert([tableCaps] item)"
-+"\n    {"
-+"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();            "
-+"\n        Statement st = null;"
-+"\n        boolean withid=false;"
-+"\n        try { "
-+"\n            st = conn.createStatement();"
-+"\n            //for tables with integer primary key"
-+"\n            if(fieldtypes[0].contentEquals(\"integer\"))withid=false;                "
-+"\n            //for tables with varchar primary key"
-+"\n            else if(fieldtypes[0].contains(\"varchar\"))withid=true;                "
-+"\n            st.executeUpdate(\"INSERT INTO \"+tablename+\" (\"+implodeFields(withid)+\")VALUES (\"+implodeValues(item, withid)+\");\");"
-+"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
-+"\n            ex.printStackTrace();"
-+"\n        }"
-+"\n    }"
-+"\n    public static void update([tableCaps] item)"
-+"\n    {"
-+"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();            "
-+"\n        Statement st = null;"
-+"\n        boolean withid=false;"
-+"\n        try { "
-+"\n            st = conn.createStatement();"
-+"\n            st.executeUpdate(\"update \"+tablename+\" set \"+implodeFieldsWithValues(item,false)+\" where "+idfield+" = '\"+item.get"+toCamelCase(idfield)+"()"+idfieldtypestringifier+"+\"';\");"
-+"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
-+"\n            ex.printStackTrace();"
-+"\n        }"
-+"\n    }"
-+"\n    public static Integer count(String conditions)"
-+"\n    {"
-+"\n        if(conditions.isEmpty())conditions = \"1\";"
-+"\n"
-+"\n        //if conditions contains a limit clause, remove it. "
-+"\n        //It is not applicable to a count query"
-+"\n        else if(conditions.contains(\"limit\"))"
-+"\n        {"
-+"\n            String[] segments=conditions.split(\"limit\");"
-+"\n            conditions=segments[0];"
-+"\n        }"
-+"\n"
-+"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();"
-+"\n        Statement st = null;"
-+"\n        ResultSet rs = null;"
-+"\n        try { "
-+"\n        st = conn.createStatement();"
-+"\n        rs = st.executeQuery(\"SELECT count(*) from \"+tablename+\" where \"+conditions);"
-+"\n            while (rs.next()) {"
-+"\n                return rs.getInt(1);"
-+"\n            }"
-+"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
-+"\n            ex.printStackTrace();"
-+"\n        }"
-+"\n        return null;"
-+"\n    }"
-+"\n    public static RecordList select(String conditions)"
-+"\n    {"
-+"\n        if(conditions.isEmpty())conditions = \"1\";"
-+"\n        Connection conn=MySqlDBHelper.getInstance().getConnection();"
-+"\n        Statement st = null;"
-+"\n        ResultSet rs = null;"
-+"\n        try { "
-+"\n            st = conn.createStatement();"
-+"\n                rs = st.executeQuery(\"SELECT * from \"+tablename+\" where \"+conditions);"
-+"\n"
-+"\n            RecordList items=new RecordList();"
-+"\n            while (rs.next()) {"
-+"\n                items.add(new [tableCaps](rs));"
-+"\n                    //items.put(rs."+rsGetterFor(idfieldtype)+"(\""+idfield+"\"), new [tableCaps](rs));"
-+"\n            }"
-+"\n            return items;"
-+"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
-+"\n            ex.printStackTrace();"
-+"\n            return null;"
-+"\n        }"
-+"\n    }"
-+"\n"
-+"\n    //-----------database helper functions--------------"
-+"\n    public static String implodeValues([tableCaps] item,boolean withId)"
-+"\n    {"
-+"\n            ArrayList<String> values=item.implodeFieldValuesHelper(withId);"
-+"\n            String output=\"\";"
-+"\n            for(String value:values)"
-+"\n            {"
-+"\n                    if(!output.isEmpty())"
-+"\n                            output+=\",\";"
-+"\n                    output+=(value!=null?\"'\"+value+\"'\":\"null\");"
-+"\n            }"
-+"\n            return output;"
-+"\n    }"
-+"\n    public static String implodeFields(boolean withId)"
-+"\n    {"
-+"\n            String output=\"\";"
-+"\n            for(String field:fields)"
-+"\n            {"
-+"\n                    if(!withId && field.contentEquals(\""+idfield+"\"))continue;"
-+"\n                    if(!output.isEmpty())"
-+"\n                            output+=\",\";"
-+"\n                    output+=field;"
-+"\n            }"
-+"\n            return output;"
-+"\n    }"
-+"\n    public static String implodeFieldsWithValues([tableCaps] item,boolean withId)"
-+"\n    {"
-+"\n            ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later."
-+"\n"
-+"\n            if(values.size()!=fields.length)"
-+"\n            {"
-+"\n                    System.err.println(\"[tableCaps]:implodeFieldsWithValues(): ERROR: values length does not match fields length\");"
-+"\n            }"
-+"\n"
-+"\n            String output=\"\";"
-+"\n            for(int i=0;i<fields.length;i++)"
-+"\n            {"
-+"\n                    if(!withId && fields[i].contentEquals(\""+idfield+"\"))continue;"
-+"\n                    if(!output.isEmpty())"
-+"\n                            output+=\",\";"
-+"\n                    output+=fields[i]+\"=\"+(values.get(i)!=null?\"'\"+values.get(i)+\"'\":\"null\");"
-+"\n            }"
-+"\n            return output;"
-+"\n    }	"
-+"\n    public static String implodeFieldsWithTypes()"
-+"\n    {"
-+"\n            String output=\"\";"
-+"\n            for(int i=0;i<fields.length;i++)"
-+"\n            {"
-+"\n                    if(fields[i].contentEquals(fields[0]))//fields[0] being the primary key"
-+"\n                            output+=fields[i]+\" \"+fieldtypes[i]+\" PRIMARY KEY\";"
-+"\n                    else"
-+"\n                            output+=\",\"+fields[i]+\" \"+fieldtypes[i];"
-+"\n            }"
-+"\n            return output;"
-+"\n    }	"
-+"\n    public static String createTable()"
-+"\n    {"
-+"\n            return \"CREATE TABLE IF NOT EXISTS \"+tablename+\" (\"+implodeFieldsWithTypes()+\" );\";"
-+"\n    }"
-+"\n    public static String deleteTable()"
-+"\n    {"
-+"\n            return \"DROP TABLE IF EXISTS \"+tablename;"
-+"\n    }"
-+"\n    public static class RecordList extends ArrayList<[tableCaps]>{"
-+"\n        public static RecordList fromJsonString(String resultstring) throws IOException"
-+"\n        {"
-+"\n            return JsonHelper.mapper.readValue(resultstring, RecordList.class);"
-+"\n        }"
-+"\n        public String toEscapedJsonString() throws IOException"
-+"\n        {"
-+"\n            return \"\\\"\"+JsonHelper.mapper.writeValueAsString(this).replace(\"\\\"\", \"\\\\\\\"\") +\"\\\"\";"
-+"\n        }"
-+"\n    }"
-+"\n    public static void main(String args[])"
-+"\n    {"
-+"\n        String database=\""+database+"\";"
-+"\n        String url = \"jdbc:mysql://"+hostname+":3306/\"+database+\"?zeroDateTimeBehavior=convertToNull\";"
-+"\n        String username=\""+username+"\";"
-+"\n        String password = \""+password+"\";"
-+"\n"
-+"\n        boolean result=MySqlDBHelper.init(url, username, password);            "
-+"\n"
-+"\n        RecordList items=[tableCaps].select(\"\");"
-+"\n        for([tableCaps] item:items)"
-+"\n        {"
-+"\n            System.out.println(item);"
-+"\n        }"
-+"\n        System.out.println([tableCaps].count(\"\"));"
-+"\n    } "
 +"\n}"
 +"\n";
+        String tablecaps=toCamelCase(table);
+        String tablecapsplural=toCamelCase(table+"s");
+        String tableplural=table+"s";
         output=output.replace("[tableCaps]", tablecaps);
         output=output.replace("[table]", table);
+        output=output.replace("[tableCapsPlural]", tablecapsplural);
+        output=output.replace("[tablePlural]", tableplural);
         
         return output;
     }
