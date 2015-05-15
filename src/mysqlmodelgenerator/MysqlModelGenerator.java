@@ -10,8 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import utils.GeneratorHelper;
 import utils.MySqlDBHelper;
-import utils.SqliteDbHelper;
 import utils.fileaccess.FileWriter;
 
 /**
@@ -20,7 +20,7 @@ import utils.fileaccess.FileWriter;
  */
 public class MysqlModelGenerator {
     
-    static String database="cecil";
+    static String database="ApiDocuParser";
     static String hostname="localhost";
     static String username="root";
     static String password="password";
@@ -144,7 +144,7 @@ public class MysqlModelGenerator {
         String output="package models;"
 +"\n"
 +"\nimport java.io.IOException;"
-+"\nimport java.math.BigDecimal;"
+//+"\nimport java.math.BigDecimal;"
 +"\nimport java.sql.Connection;"
 +"\nimport java.sql.ResultSet;"
 +"\nimport java.sql.SQLException;"
@@ -159,9 +159,9 @@ public class MysqlModelGenerator {
 +"\n"
 +"\npublic class [tableCapsPlural] {"
 +"\n    //------------FIELDS-----------"
-+"\n    public static final String tablename=[tableCaps].tablename;"
-+"\n    public static String[] fields=[tableCaps].fields;"
-+"\n    public static String[] fieldtypes=[tableCaps].fieldtypes;"
++"\n    public static final String tablename=[tableCapsSingular].tablename;"
++"\n    public static String[] fields=[tableCapsSingular].fields;"
++"\n    public static String[] fieldtypes=[tableCapsSingular].fieldtypes;"
 +"\n    //-----------------------"
 +"\n    //-------------------------TABLE FUNCTIONS---------------------"
 +"\n"
@@ -174,9 +174,9 @@ public class MysqlModelGenerator {
 +"\n            return null;"
 +"\n    }	"
 +"\n    */"
-+"\n    public static [tableCaps] getBy"+toCamelCase(idfield)+"("+iddatatype+" "+idfield+") {"
++"\n    public static [tableCapsSingular] getBy"+toCamelCase(idfield)+"("+iddatatype+" "+idfield+") {"
 +"\n            RecordList map=select(\" "+idfield+" = '\"+"+idfield+idfieldtypestringifier+"+\"'\");"
-+"\n            for([tableCaps] item:map)return item;"
++"\n            for([tableCapsSingular] item:map)return item;"
 +"\n            return null;"
 +"\n    }"
 +"\n    //-----------database functions--------------"
@@ -193,11 +193,11 @@ public class MysqlModelGenerator {
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
-+"\n    public static void delete([tableCaps] item)"
++"\n    public static void delete([tableCapsSingular] item)"
 +"\n    {"
 +"\n        delete(item.get"+toCamelCase(idfield)+"());"
 +"\n    }"
-+"\n    public static void insert([tableCaps] item)"
++"\n    public static Integer insert([tableCapsSingular] item)"
 +"\n    {"
 +"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();            "
 +"\n        Statement st = null;"
@@ -209,12 +209,13 @@ public class MysqlModelGenerator {
 +"\n            //for tables with varchar primary key"
 +"\n            else if(fieldtypes[0].contains(\"varchar\"))withid=true;                "
 +"\n            st.executeUpdate(\"INSERT INTO \"+tablename+\" (\"+implodeFields(withid)+\")VALUES (\"+implodeValues(item, withid)+\");\");"
++"\n            return getLastInsertId();"
 +"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
++"\n            return null;"
 +"\n        }"
 +"\n    }"
-+"\n    public static void update([tableCaps] item)"
++"\n    public static void update([tableCapsSingular] item)"
 +"\n    {"
 +"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();            "
 +"\n        Statement st = null;"
@@ -227,7 +228,23 @@ public class MysqlModelGenerator {
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
-+"\n    public static Integer count(String conditions)"
++"\n    public static Integer getLastInsertId()" 
++"\n    {" 
++"\n        Connection conn=SqliteDbHelper.getInstance().getConnection();\n" +
+"        Statement st = null;\n" +
+"        ResultSet rs = null;\n" +
+"        try { \n" +
+"        st = conn.createStatement();\n" +
+"        rs = st.executeQuery(\"SELECT last_insert_rowid() from \"+tablename);\n" +
+"            while (rs.next()) {\n" +
+"                return rs.getInt(1);\n" +
+"            }\n" +
+"        } catch (SQLException ex) {\n" +
+"            ex.printStackTrace();\n" +
+"        }\n" +
+"        return null;\n" +
+"    }" +
+"\n    public static Integer count(String conditions)"
 +"\n    {"
 +"\n        if(conditions.isEmpty())conditions = \"1\";"
 +"\n"
@@ -249,7 +266,6 @@ public class MysqlModelGenerator {
 +"\n                return rs.getInt(1);"
 +"\n            }"
 +"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCapsPlural].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n        return null;"
@@ -266,7 +282,7 @@ public class MysqlModelGenerator {
 +"\n"
 +"\n            RecordList items=new RecordList();"
 +"\n            while (rs.next()) {"
-+"\n                items.add(new [tableCaps](rs));"
++"\n                items.add(new [tableCapsSingular](rs));"
 +"\n                    //items.put(rs."+rsGetterFor(idfieldtype)+"(\""+idfield+"\"), new [tableCapsPlural](rs));"
 +"\n            }"
 +"\n            return items;"
@@ -278,7 +294,7 @@ public class MysqlModelGenerator {
 +"\n    }"
 +"\n"
 +"\n    //-----------database helper functions--------------"
-+"\n    public static String implodeValues([tableCaps] item,boolean withId)"
++"\n    public static String implodeValues([tableCapsSingular] item,boolean withId)"
 +"\n    {"
 +"\n            ArrayList<String> values=item.implodeFieldValuesHelper(withId);"
 +"\n            String output=\"\";"
@@ -302,7 +318,7 @@ public class MysqlModelGenerator {
 +"\n            }"
 +"\n            return output;"
 +"\n    }"
-+"\n    public static String implodeFieldsWithValues([tableCaps] item,boolean withId)"
++"\n    public static String implodeFieldsWithValues([tableCapsSingular] item,boolean withId)"
 +"\n    {"
 +"\n            ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later."
 +"\n"
@@ -344,7 +360,7 @@ public class MysqlModelGenerator {
 +"\n        try { "
 +"\n            SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);"
 +"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);"
++"\n            Logger.getLogger([tableCapsSingular].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
@@ -354,11 +370,11 @@ public class MysqlModelGenerator {
 +"\n        try { "
 +"\n            SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);"
 +"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);"
++"\n            Logger.getLogger([tableCapsSingular].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
-+"\n    public static class RecordList extends ArrayList<[tableCaps]>{"
++"\n    public static class RecordList extends ArrayList<[tableCapsSingular]>{"
 +"\n        public static RecordList fromJsonString(String resultstring) throws IOException"
 +"\n        {"
 +"\n            return JsonHelper.mapper.readValue(resultstring, RecordList.class);"
@@ -371,14 +387,15 @@ public class MysqlModelGenerator {
 +"\n    public static void main(String args[])"
 +"\n    {"
 +"\n        try {"
++"\n            deleteTable();"
 +"\n            createTable();"
 //+"\n////            //System.out.println("Table created successfully");"
-+"\n            [tableCaps] i=new [tableCaps]();"
++"\n            //[tableCapsSingular] i=new [tableCapsSingular]();"
 //+"\n            i.setName(\"baa\");"
-+"\n            i.save();"
++"\n            //i.save();"
 +"\n            "
 +"\n//            [tableCapsPlural].delete(1);"
-+"\n            for([tableCaps] j:[tableCapsPlural].select(\"\"))"
++"\n            for([tableCapsSingular] j:[tableCapsPlural].select(\"\"))"
 +"\n                System.out.println(j.getId());"//+j.getName()
 +"\n            "
 +"\n            System.out.println([tableCapsPlural].count(\"\"));"
@@ -389,14 +406,24 @@ public class MysqlModelGenerator {
 +"\n    } "
 +"\n}"
 +"\n";
+//        String tableplural=table;
+//        String tablesingular=GeneratorHelper.singularize(table);
+//        String tablecapssingular=toCamelCase(tablesingular);
+//        String tablecapsplural=toCamelCase(tableplural);
+//        output=output.replace("[table]", table);
+//        output=output.replace("[tableCapsSingular]", tablecapssingular);
+//        output=output.replace("[tableSingular]", tablesingular);
+//        output=output.replace("[tableCapsPlural]", tablecapsplural);
+//        output=output.replace("[tablePlural]", tableplural);
+
         String tablecaps=toCamelCase(table);
         String tablecapsplural=toCamelCase(table+"s");
         String tableplural=table+"s";
-        output=output.replace("[tableCaps]", tablecaps);
+        output=output.replace("[tableCapsSingular]", tablecaps);
         output=output.replace("[table]", table);
         output=output.replace("[tableCapsPlural]", tablecapsplural);
         output=output.replace("[tablePlural]", tableplural);
-
+        
         return output;
     }
     public static void createModelFile(String table, ArrayList<String> fields, ArrayList<String> fieldtypes)
@@ -474,15 +501,21 @@ public class MysqlModelGenerator {
         
         String savestring="";
         if(iddatatype.contentEquals("String"))
-            savestring="\n            if("+idfield+"==null || "+idfield+".isEmpty() )";
+        {
+            savestring="\n            if("+idfield+"==null || "+idfield+".isEmpty() || [tableCapsPlural].getById(id)==null)";
+            savestring+="\n                    [tableCapsPlural].insert(([tableCapsSingular])this);";
+        }
         else
-            savestring="\n            if("+idfield+"==null || "+idfield+"==0)";
+        {
+            savestring="\n            if("+idfield+"==null || "+idfield+"==0 || [tableCapsPlural].getById(id)==null)";
+            savestring+="\n                    "+idfield+"=[tableCapsPlural].insert(([tableCapsSingular])this);";
+        }
         
         
         String output="package models;"
 +"\n"
 +"\nimport java.io.IOException;"
-+"\nimport java.math.BigDecimal;"
+//+"\nimport java.math.BigDecimal;"
 +"\nimport java.sql.Connection;"
 +"\nimport java.sql.ResultSet;"
 +"\nimport java.sql.SQLException;"
@@ -495,7 +528,7 @@ public class MysqlModelGenerator {
 +"\nimport utils.SqliteDbHelper;"
 +"\nimport utils.JsonHelper;"
 +"\n"
-+"\npublic class [tableCaps] {"
++"\npublic class [tableCapsSingular] {"
 +"\n    //------------FIELDS-----------"
 +"\n    public static final String tablename=\"[table]\";"
 +"\n    //field names"
@@ -510,13 +543,12 @@ public class MysqlModelGenerator {
 +"\n"
 +vardefinitions
 +"\n"
-+"\n    public [tableCaps]() {"
++"\n    public [tableCapsSingular]() {"
 +"\n    }"
-+"\n    public [tableCaps](ResultSet rs) {"
++"\n    public [tableCapsSingular](ResultSet rs) {"
 +"\n        try {"
 +constructorfields
 +"\n        } catch (SQLException ex) {"
-+"\n            Logger.getLogger([tableCaps].class.getName()).log(Level.SEVERE, null, ex);"
 +"\n            ex.printStackTrace();"
 +"\n        }"
 +"\n    }"
@@ -545,9 +577,8 @@ public class MysqlModelGenerator {
 +"\n    public void save()"
 +"\n    {"
 +savestring
-+"\n                    [tableCapsPlural].insert(this);"
 +"\n            else"
-+"\n                    [tableCapsPlural].update(this);"
++"\n                    [tableCapsPlural].update(([tableCapsSingular])this);"
 +"\n    }"
 +"\n    @Override"
 +"\n    public String toString()"
@@ -559,7 +590,7 @@ public class MysqlModelGenerator {
         String tablecaps=toCamelCase(table);
         String tablecapsplural=toCamelCase(table+"s");
         String tableplural=table+"s";
-        output=output.replace("[tableCaps]", tablecaps);
+        output=output.replace("[tableCapsSingular]", tablecaps);
         output=output.replace("[table]", table);
         output=output.replace("[tableCapsPlural]", tablecapsplural);
         output=output.replace("[tablePlural]", tableplural);
@@ -599,7 +630,7 @@ public class MysqlModelGenerator {
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
             return "Integer";
         else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
-            return "BigDecimal";
+            return "Double";
         else if(type.contentEquals("float")||type.contentEquals("float()"))
             return "Float";
         else if(type.contentEquals("double")||type.contentEquals("double()"))
@@ -685,7 +716,7 @@ public class MysqlModelGenerator {
         else if(type.contains("tinyint") || type.contains("smallint") || type.contains("mediumint"))
             return "getInt";
         else if(type.contentEquals("decimal")||type.contentEquals("decimal()"))
-            return "getBigDecimal";
+            return "getDouble";
         else if(type.contentEquals("float")||type.contentEquals("float()"))
             return "getFloat";
         else if(type.contentEquals("double")||type.contentEquals("double()"))

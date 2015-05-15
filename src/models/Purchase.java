@@ -1,7 +1,6 @@
 package models;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,18 +21,24 @@ public class Purchase {
             "id"
             ,"date"
             ,"vehicle_id"
+            ,"amount"
+            ,"description"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
             ,"date"
             ,"int(11)"
+            ,"decimal(10,0)"
+            ,"text"
             };
     //-----------------------
 
     public Integer id;
     public Date date;
     public Integer vehicle_id;
+    public Double amount;
+    public String description;
 
     public Purchase() {
     }
@@ -42,6 +47,8 @@ public class Purchase {
             id=rs.getInt("id");
             date=rs.getDate("date");
             vehicle_id=rs.getInt("vehicle_id");
+            amount=rs.getDouble("amount");
+            description=rs.getString("description");
         } catch (SQLException ex) {
             Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
@@ -77,6 +84,22 @@ public class Purchase {
             this.vehicle_id = vehicle_id;
     }
 
+    public Double getAmount() {
+            return amount;
+    }
+
+    public void setAmount(Double amount) {
+            this.amount = amount;
+    }
+
+    public String getDescription() {
+            return description;
+    }
+
+    public void setDescription(String description) {
+            this.description = description;
+    }
+
 
     //database functions
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
@@ -87,6 +110,8 @@ public class Purchase {
             if(withId)values.add(id!=null?id.toString():null);
             values.add(date!=null?date.toString():null);
             values.add(vehicle_id!=null?vehicle_id.toString():null);
+            values.add(amount!=null?amount.toString():null);
+            values.add(description);
 
             return values;
     }

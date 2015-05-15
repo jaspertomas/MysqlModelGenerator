@@ -13,26 +13,26 @@ import java.util.logging.Logger;
 import utils.SqliteDbHelper;
 import utils.JsonHelper;
 
-public class PurchaseItems {
+public class Parameters {
     //------------FIELDS-----------
-    public static final String tablename=PurchaseItem.tablename;
-    public static String[] fields=PurchaseItem.fields;
-    public static String[] fieldtypes=PurchaseItem.fieldtypes;
+    public static final String tablename=Parameter.tablename;
+    public static String[] fields=Parameter.fields;
+    public static String[] fieldtypes=Parameter.fieldtypes;
     //-----------------------
     //-------------------------TABLE FUNCTIONS---------------------
 
     //-----------getter functions----------
     /*
-    public static PurchaseItems getByName(String name)
+    public static Parameters getByName(String name)
     {
-            HashMap<Integer,PurchaseItems> map=select(" name = '"+name+"'");
-            for(PurchaseItems item:map)return item;
+            HashMap<Integer,Parameters> map=select(" name = '"+name+"'");
+            for(Parameters item:map)return item;
             return null;
     }	
     */
-    public static PurchaseItem getById(Integer id) {
+    public static Parameter getById(Integer id) {
             RecordList map=select(" id = '"+id.toString()+"'");
-            for(PurchaseItem item:map)return item;
+            for(Parameter item:map)return item;
             return null;
     }
     //-----------database functions--------------
@@ -45,15 +45,15 @@ public class PurchaseItems {
             st = conn.createStatement();
             st.executeUpdate("delete from "+tablename+" where id = '"+id.toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItems.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Parameters.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static void delete(PurchaseItem item)
+    public static void delete(Parameter item)
     {
         delete(item.getId());
     }
-    public static void insert(PurchaseItem item)
+    public static Integer insert(Parameter item)
     {
         Connection conn=SqliteDbHelper.getInstance().getConnection();            
         Statement st = null;
@@ -65,12 +65,13 @@ public class PurchaseItems {
             //for tables with varchar primary key
             else if(fieldtypes[0].contains("varchar"))withid=true;                
             st.executeUpdate("INSERT INTO "+tablename+" ("+implodeFields(withid)+")VALUES ("+implodeValues(item, withid)+");");
+            return getLastInsertId();
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItems.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
+            return null;
         }
     }
-    public static void update(PurchaseItem item)
+    public static void update(Parameter item)
     {
         Connection conn=SqliteDbHelper.getInstance().getConnection();            
         Statement st = null;
@@ -79,9 +80,25 @@ public class PurchaseItems {
             st = conn.createStatement();
             st.executeUpdate("update "+tablename+" set "+implodeFieldsWithValues(item,false)+" where id = '"+item.getId().toString()+"';");
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItems.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Parameters.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
+    }
+    public static Integer getLastInsertId()
+    {
+        Connection conn=SqliteDbHelper.getInstance().getConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        try { 
+        st = conn.createStatement();
+        rs = st.executeQuery("SELECT last_insert_rowid() from "+tablename);
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
     public static Integer count(String conditions)
     {
@@ -105,7 +122,6 @@ public class PurchaseItems {
                 return rs.getInt(1);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItems.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
         return null;
@@ -122,19 +138,19 @@ public class PurchaseItems {
 
             RecordList items=new RecordList();
             while (rs.next()) {
-                items.add(new PurchaseItem(rs));
-                    //items.put(rs.getInt("id"), new PurchaseItems(rs));
+                items.add(new Parameter(rs));
+                    //items.put(rs.getInt("id"), new Parameters(rs));
             }
             return items;
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItems.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Parameters.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             return null;
         }
     }
 
     //-----------database helper functions--------------
-    public static String implodeValues(PurchaseItem item,boolean withId)
+    public static String implodeValues(Parameter item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(withId);
             String output="";
@@ -158,13 +174,13 @@ public class PurchaseItems {
             }
             return output;
     }
-    public static String implodeFieldsWithValues(PurchaseItem item,boolean withId)
+    public static String implodeFieldsWithValues(Parameter item,boolean withId)
     {
             ArrayList<String> values=item.implodeFieldValuesHelper(true);//get entire list of values; whether the id is included will be dealt with later.
 
             if(values.size()!=fields.length)
             {
-                    System.err.println("PurchaseItems:implodeFieldsWithValues(): ERROR: values length does not match fields length");
+                    System.err.println("Parameters:implodeFieldsWithValues(): ERROR: values length does not match fields length");
             }
 
             String output="";
@@ -200,7 +216,7 @@ public class PurchaseItems {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItem.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -210,11 +226,11 @@ public class PurchaseItems {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(PurchaseItem.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
-    public static class RecordList extends ArrayList<PurchaseItem>{
+    public static class RecordList extends ArrayList<Parameter>{
         public static RecordList fromJsonString(String resultstring) throws IOException
         {
             return JsonHelper.mapper.readValue(resultstring, RecordList.class);
@@ -229,14 +245,14 @@ public class PurchaseItems {
         try {
             deleteTable();
             createTable();
-            //PurchaseItem i=new PurchaseItem();
+            //Parameter i=new Parameter();
             //i.save();
             
-//            PurchaseItems.delete(1);
-            for(PurchaseItem j:PurchaseItems.select(""))
+//            Parameters.delete(1);
+            for(Parameter j:Parameters.select(""))
                 System.out.println(j.getId());
             
-            System.out.println(PurchaseItems.count(""));
+            System.out.println(Parameters.count(""));
             
         } catch (Exception e) {
             e.printStackTrace();

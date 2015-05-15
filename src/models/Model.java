@@ -13,36 +13,31 @@ import java.util.logging.Logger;
 import utils.SqliteDbHelper;
 import utils.JsonHelper;
 
-public class Item {
+public class Model {
     //------------FIELDS-----------
-    public static final String tablename="item";
+    public static final String tablename="model";
     //field names
     public static String[] fields={
             "id"
             ,"name"
-            ,"description"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"varchar(100)"
-            ,"varchar(255)"
+            ,"varchar(30)"
             };
     //-----------------------
 
     public Integer id;
     public String name;
-    public String description;
 
-    public Item() {
+    public Model() {
     }
-    public Item(ResultSet rs) {
+    public Model(ResultSet rs) {
         try {
             id=rs.getInt("id");
             name=rs.getString("name");
-            description=rs.getString("description");
         } catch (SQLException ex) {
-            Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -68,14 +63,6 @@ public class Item {
             this.name = name;
     }
 
-    public String getDescription() {
-            return description;
-    }
-
-    public void setDescription(String description) {
-            this.description = description;
-    }
-
 
     //database functions
     public ArrayList<String> implodeFieldValuesHelper(boolean withId)
@@ -85,20 +72,19 @@ public class Item {
             //add values for each field here
             if(withId)values.add(id!=null?id.toString():null);
             values.add(name);
-            values.add(description);
 
             return values;
     }
     public void delete()
     {
-            Items.delete(this);
+            Models.delete(this);
     }
     public void save()
     {
-            if(id==null || id==0)
-                    Items.insert(this);
+            if(id==null || id==0 || Models.getById(id)==null)
+                    id=Models.insert((Model)this);
             else
-                    Items.update(this);
+                    Models.update((Model)this);
     }
     @Override
     public String toString()

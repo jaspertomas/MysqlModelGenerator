@@ -1,7 +1,6 @@
 package models;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -201,7 +200,7 @@ public class Vehicles {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vehicle.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -211,7 +210,7 @@ public class Vehicles {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vehicle.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -228,9 +227,10 @@ public class Vehicles {
     public static void main(String args[])
     {
         try {
+            deleteTable();
             createTable();
-            Vehicle i=new Vehicle();
-            i.save();
+            //Vehicle i=new Vehicle();
+            //i.save();
             
 //            Vehicles.delete(1);
             for(Vehicle j:Vehicles.select(""))

@@ -1,7 +1,6 @@
 package models;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -201,7 +200,7 @@ public class Purchases {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -211,7 +210,7 @@ public class Purchases {
         try { 
             SqliteDbHelper.getInstance().getConnection().createStatement().executeUpdate(query);
         } catch (SQLException ex) {
-            Logger.getLogger(Items.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -228,9 +227,10 @@ public class Purchases {
     public static void main(String args[])
     {
         try {
+            deleteTable();
             createTable();
-            Purchase i=new Purchase();
-            i.save();
+            //Purchase i=new Purchase();
+            //i.save();
             
 //            Purchases.delete(1);
             for(Purchase j:Purchases.select(""))

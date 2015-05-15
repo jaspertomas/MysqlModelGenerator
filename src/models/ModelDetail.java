@@ -13,36 +13,39 @@ import java.util.logging.Logger;
 import utils.SqliteDbHelper;
 import utils.JsonHelper;
 
-public class Item {
+public class ModelDetail {
     //------------FIELDS-----------
-    public static final String tablename="item";
+    public static final String tablename="model_detail";
     //field names
     public static String[] fields={
             "id"
-            ,"name"
-            ,"description"
+            ,"model_id"
+            ,"field"
+            ,"fieldtype"
             };
     //field types
     public static String[] fieldtypes={
             "int(11)"
-            ,"varchar(100)"
-            ,"varchar(255)"
+            ,"int(11)"
+            ,"varchar(30)"
+            ,"varchar(30)"
             };
     //-----------------------
 
     public Integer id;
-    public String name;
-    public String description;
+    public Integer model_id;
+    public String field;
+    public String fieldtype;
 
-    public Item() {
+    public ModelDetail() {
     }
-    public Item(ResultSet rs) {
+    public ModelDetail(ResultSet rs) {
         try {
             id=rs.getInt("id");
-            name=rs.getString("name");
-            description=rs.getString("description");
+            model_id=rs.getInt("model_id");
+            field=rs.getString("field");
+            fieldtype=rs.getString("fieldtype");
         } catch (SQLException ex) {
-            Logger.getLogger(Item.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
     }
@@ -60,20 +63,28 @@ public class Item {
             this.id = id;
     }
 
-    public String getName() {
-            return name;
+    public Integer getModelId() {
+            return model_id;
     }
 
-    public void setName(String name) {
-            this.name = name;
+    public void setModelId(Integer model_id) {
+            this.model_id = model_id;
     }
 
-    public String getDescription() {
-            return description;
+    public String getField() {
+            return field;
     }
 
-    public void setDescription(String description) {
-            this.description = description;
+    public void setField(String field) {
+            this.field = field;
+    }
+
+    public String getFieldtype() {
+            return fieldtype;
+    }
+
+    public void setFieldtype(String fieldtype) {
+            this.fieldtype = fieldtype;
     }
 
 
@@ -84,21 +95,22 @@ public class Item {
 
             //add values for each field here
             if(withId)values.add(id!=null?id.toString():null);
-            values.add(name);
-            values.add(description);
+            values.add(model_id!=null?model_id.toString():null);
+            values.add(field);
+            values.add(fieldtype);
 
             return values;
     }
     public void delete()
     {
-            Items.delete(this);
+            ModelDetails.delete(this);
     }
     public void save()
     {
-            if(id==null || id==0)
-                    Items.insert(this);
+            if(id==null || id==0 || ModelDetails.getById(id)==null)
+                    id=ModelDetails.insert((ModelDetail)this);
             else
-                    Items.update(this);
+                    ModelDetails.update((ModelDetail)this);
     }
     @Override
     public String toString()
